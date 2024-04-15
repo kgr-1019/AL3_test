@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include"Player.h"
 
 /// <summary>
 /// ゲームシーン
@@ -14,6 +15,11 @@
 class GameScene {
 
 public: // メンバ関数
+
+
+	// ビュープロジェクション
+	ViewProjection viewProjection_;
+
 	/// <summary>
 	/// コンストクラタ
 	/// </summary>
@@ -43,6 +49,14 @@ private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
+
+	Model* model_ = nullptr;
+
+	// 自キャラ
+	Player* player_ = nullptr;
+
+	uint32_t textureHandle_ = 0;// テクスチャハンドル
+
 
 	/// <summary>
 	/// ゲームシーン用
