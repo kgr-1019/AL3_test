@@ -1,6 +1,8 @@
 #pragma once
 #include"Model.h"
 #include"WorldTransform.h"
+#include"Input.h"
+#include"Vector3.h"
 class Player {
 
 public:// メンバ関数
@@ -13,6 +15,7 @@ public:// メンバ関数
 	/// 初期化
 	void Initialize(Model* model, uint32_t textureHandle);
 	
+	Vector3 Add(const WorldTransform& worldTransform_, const Vector3& move);
 
 	/// 更新
 	void Update();
@@ -27,4 +30,9 @@ private:// メンバ変数
 
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+
+	// キーボード入力
+	Input* input_ = nullptr;
+
+
 };
