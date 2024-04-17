@@ -15,7 +15,7 @@ public:// メンバ関数
 	/// 初期化
 	void Initialize(Model* model, uint32_t textureHandle);
 	
-	Vector3 Add(const WorldTransform& worldTransform_, const Vector3& move);
+	//Vector3 Add(const Vector3& translation_, const Vector3& move);
 
 	/// 更新
 	void Update();
