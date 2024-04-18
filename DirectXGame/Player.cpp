@@ -1,5 +1,6 @@
 #include "Player.h"
 #include"cassert"
+#include"ImGuiManager.h"
 
 
 // 関数のプロトタイプ宣言
@@ -145,8 +146,6 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 void Player::Update() {
 
-	// スケーリング行列の作成
-
 
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
@@ -179,9 +178,30 @@ void Player::Update() {
 		move.y += kCharacterSpeed;
 	}
 
+	// 移動限界座標
+	const float kMoveLimitX = 100;
+	const float kMoveLimitY = 100;
+
+	// 範囲を超えない処理
+	move.x = max(move.x, -kMoveLimitX);
+	move.x = min(move.x, +kMoveLimitX);
+	move.y = max(move.y, -kMoveLimitY);
+	move.y = min(move.y, +kMoveLimitY);
+
+
+	// キャラクターの座標を画面表示する処理
+	ImGui::Begin("");
+	ImGui::Text("Player %d,%d,%d", move.x, move.y, move.z);
+	ImGui::End();
+
+
+
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 	Matrix4x4 rotationX = MakeRotateXMatrix(worldTransform_.rotation_.x);
-	//worldTransform_.rotation_ = Multiply(worldTransform_.rotation_.x)
+	Matrix4x4 rotationY = MakeRotateYMatrix(worldTransform_.rotation_.y);
+	Matrix4x4 rotationZ = MakeRotateZMatrix(worldTransform_.rotation_.z);
+	Matrix4x4 worldTransform_.rotation_ = Multiply(rotationX, Multiply(rotationY, rotationZ));
+	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 }
 
 
