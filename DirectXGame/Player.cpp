@@ -20,6 +20,7 @@ Vector3 Add(const Vector3& translation, const Vector3& move) {
 	return result;
 }
 
+
 // 拡大縮小行列
 Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 	Matrix4x4 result{};
@@ -206,6 +207,23 @@ void Player::Update() {
 	ImGui::Begin("PlayerPos");
 	ImGui::Text("Player %.02f,%.02f,%.02f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
 	ImGui::End();
+}
+
+
+void Player::Rotate()
+{
+	// 回転の速さ[ラジアン/frame]
+	const float kRotSpeed = 0.02f; 
+
+	// 押した方向で移動ベクトルを変更
+	if (input_->PushKey(DIK_A))
+	{
+		
+
+	} else if (input_->PushKey(DIK_D)) {
+
+		
+	}
 }
 
 

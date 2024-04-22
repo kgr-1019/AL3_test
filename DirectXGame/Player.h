@@ -14,6 +14,9 @@ public:// メンバ関数
 	/// 更新
 	void Update();
 
+	/// 旋回(回転)
+	void Rotate();
+
 	/// 描画
 	void Draw(ViewProjection& viewProjection);
 
