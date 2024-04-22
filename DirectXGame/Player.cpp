@@ -47,7 +47,7 @@ Matrix4x4 MakeRotateXMatrix(const Vector3& rotate) {
 }
 
 // Y軸回転行列
-Matrix4x4 MakeRotateYMatrix(Vector3 rotate) {
+Matrix4x4 MakeRotateYMatrix(const Vector3& rotate) {
 	Matrix4x4 result{};
 
 	result.m[0][0] = std::cos(rotate.y);
@@ -61,7 +61,7 @@ Matrix4x4 MakeRotateYMatrix(Vector3 rotate) {
 }
 
 // Z軸回転行列
-Matrix4x4 MakeRotateZMatrix(Vector3 rotate) {
+Matrix4x4 MakeRotateZMatrix(const Vector3& rotate) {
 	Matrix4x4 result{};
 
 	result.m[0][0] = std::cos(rotate.z);
@@ -146,16 +146,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 void Player::Update() {
 
-
-	// 行列を定数バッファに転送
-	worldTransform_.TransferMatrix();
-
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
-
-	/*worldTransform_.translation_ = {0, 0, 0};
-	worldTransform_.rotation_ = {0, 0, 0};
-	worldTransform_.scale_ = {1, 1, 1};*/
 
 	// キャラクターの移動速さ
 	const float kCharacterSpeed = 0.2f;
@@ -171,37 +163,49 @@ void Player::Update() {
 	// 押した方向で移動ベクトルを変更（上下）
 	if (input_->PushKey(DIK_UP)) {
 
-		move.y -= kCharacterSpeed;
+		move.y += kCharacterSpeed;
 
 	} else if (input_->PushKey(DIK_DOWN)) {
 
-		move.y += kCharacterSpeed;
+		move.y -= kCharacterSpeed;
 	}
 
 	// 移動限界座標
-	const float kMoveLimitX = 100;
-	const float kMoveLimitY = 100;
+	const float kMoveLimitX = 34;
+	const float kMoveLimitY = 18;
 
 	// 範囲を超えない処理
-	move.x = max(move.x, -kMoveLimitX);
-	move.x = min(move.x, +kMoveLimitX);
-	move.y = max(move.y, -kMoveLimitY);
-	move.y = min(move.y, +kMoveLimitY);
+	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
+	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
+	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
+	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
+
+	// 座標移動(ベクトルの加算)
+	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
+
+	// 平行移動行列
+	Matrix4x4 translateMatrix = MakeTranslateMatrix(worldTransform_.translation_);
+	// スケーリング行列
+	Matrix4x4 scaleMatrix = MakeScaleMatrix(worldTransform_.scale_);
+	// 回転行列
+	Matrix4x4 rotationXMatrix = MakeRotateXMatrix(worldTransform_.rotation_);
+	Matrix4x4 rotationYMatrix = MakeRotateYMatrix(worldTransform_.rotation_);
+	Matrix4x4 rotationZMatrix = MakeRotateZMatrix(worldTransform_.rotation_);
+	Matrix4x4 rotationMatrix = Multiply(rotationXMatrix, Multiply(rotationYMatrix, rotationZMatrix));
+	// 平行、スケーリング、回転行列を合成
+	Matrix4x4 matWorldMatrix = Multiply(scaleMatrix, Multiply(rotationMatrix, translateMatrix));
+
+	// 行列更新
+	worldTransform_.matWorld_ = matWorldMatrix;
+
+	// 行列を定数バッファに転送
+	worldTransform_.TransferMatrix();
 
 	// キャラクターの座標を画面表示する処理
-	ImGui::Begin("");
-	ImGui::Text("Player %d,%d,%d", move.x, move.y, move.z);
+	ImGui::Begin("PlayerPos");
+	ImGui::Text("Player %.02f,%.02f,%.02f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
 	ImGui::End();
-
-
-
-	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
-	Matrix4x4 rotationX = MakeRotateXMatrix(worldTransform_.rotation_.x);
-	Matrix4x4 rotationY = MakeRotateYMatrix(worldTransform_.rotation_.y);
-	Matrix4x4 rotationZ = MakeRotateZMatrix(worldTransform_.rotation_.z);
-	Matrix4x4 worldTransform_.rotation_ = Multiply(rotationX, Multiply(rotationY, rotationZ));
-	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 }
 
 
