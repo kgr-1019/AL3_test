@@ -105,24 +105,23 @@ Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
 }
 
 // アフィン変換
-Matrix4x4 MakeAffineMatrix(const Matrix4x4& S, const Matrix4x4& R, const Matrix4x4& T) {
-	Matrix4x4 SR{};
+Matrix4x4 MakeAffineMatrix(const Vector3& S, const Matrix4x4& R, const Vector3& T) 
+{
 	Matrix4x4 result{};
 
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			for (int k = 0; k < 4; k++) {
-				SR.m[i][j] += S.m[i][k] * R.m[k][j];
-			}
-		}
-	}
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			for (int k = 0; k < 4; k++) {
-				result.m[i][j] += SR.m[i][k] * T.m[k][j];
-			}
-		}
-	}
+	result.m[0][0] = S.x * R.m[0][0];
+	result.m[0][1] = S.x * R.m[0][1];
+	result.m[0][2] = S.x * R.m[0][2];
+	result.m[1][0] = S.y * R.m[1][0];
+	result.m[1][1] = S.y * R.m[1][1];
+	result.m[1][2] = S.y * R.m[1][2];
+	result.m[2][0] = S.z * R.m[2][0];
+	result.m[2][1] = S.z * R.m[2][1];
+	result.m[2][2] = S.z * R.m[2][2];
+	result.m[3][0] = T.x;
+	result.m[3][1] = T.y;
+	result.m[3][2] = T.z;
+	result.m[3][3] = 1;
 
 	return result;
 }
@@ -207,6 +206,18 @@ void Player::Update() {
 	ImGui::Begin("PlayerPos");
 	ImGui::Text("Player %.02f,%.02f,%.02f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
 	ImGui::End();
+
+	// キャラクター旋回処理
+	Rotate();
+
+	// キャラクター攻撃処理
+	Attack();
+
+	// 弾更新
+	if (bullet_)
+	{
+		bullet_->Update();
+	}
 }
 
 
@@ -218,11 +229,25 @@ void Player::Rotate()
 	// 押した方向で移動ベクトルを変更
 	if (input_->PushKey(DIK_A))
 	{
-		
+		worldTransform_.rotation_.y -= kRotSpeed;
 
 	} else if (input_->PushKey(DIK_D)) {
 
-		
+		worldTransform_.rotation_.y += kRotSpeed;
+	}
+}
+
+
+void Player::Attack() 
+{
+	if (input_->PushKey(DIK_SPACE)) 
+	{
+		// 弾を生成し、初期化
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_, worldTransform_.translation_);
+
+		// 弾を登録する
+		bullet_ = newBullet;
 	}
 }
 
@@ -231,5 +256,11 @@ void Player::Draw(ViewProjection& viewProjection) {
 
 	//3Dモデルを描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+
+	// 弾描画
+	if (bullet_)
+	{
+		bullet_->Draw(viewProjection);
+	}
 
 }

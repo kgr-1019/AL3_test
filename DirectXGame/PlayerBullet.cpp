@@ -16,14 +16,16 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position)
 	worldTransform_.Initialize();
 
 	// 引数で受け取った初期座標をセット
-	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform_.translation_ = position;
 };
 
 void PlayerBullet::Update() 
 { 
-	worldTransform_->UpdateMatrix(); 
+	worldTransform_.UpdateMatrix(); 
 };
 
-void PlayerBullet::Draw(const ViewProjection& viewProjection){
-
+void PlayerBullet::Draw(const ViewProjection& viewProjection)
+{ 
+	// モデルの描画
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 };
