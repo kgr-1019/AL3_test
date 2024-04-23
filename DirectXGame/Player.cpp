@@ -16,7 +16,6 @@ Vector3 Add(const Vector3& translation, const Vector3& move) {
 	return result;
 }
 
-
 // 拡大縮小行列
 Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 	Matrix4x4 result{};
@@ -128,6 +127,22 @@ Matrix4x4 MakeAffineMatrix(const Vector3& S, const Vector3& R, const Vector3& T)
 	return result;
 }
 
+// ベクトル変換
+/*
+3x3行列とベクトルの掛け算をすることで、平行移動を無視して
+スケーリングと回転のみを適用する。
+*/
+Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m)
+{
+	Vector3 result{
+	    v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
+	    v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
+	    v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2],
+	};
+	return result;
+}
+
+
 Player::~Player() 
 { 
 	// 弾のポインタが１つの時は１回deleteすればよかったが、
@@ -154,7 +169,28 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 
-void Player::Update() {
+void Player::Update() 
+{
+	// デスフラグの立った弾を削除
+	/*
+	死んだ弾を削除する処理。
+	std::list のメンバ関数である remove_if() は、条件に当てはまる要素を
+	リストから排除する関数。
+	条件判定用の関数を渡す必要があるのだが、このように true か false を返す
+	ラムダ式を指定すると便利。
+
+	true を返した弾は list から取り除かれる。
+	削除条件を満たした場合に delete した上で true を返すことで、インスタンスの
+	解放と list からの除外を両立させる。
+	*/
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
 
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
@@ -191,6 +227,8 @@ void Player::Update() {
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
 
+
+
 	// 座標移動(ベクトルの加算)
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 
@@ -211,6 +249,8 @@ void Player::Update() {
 
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
+
+
 
 	// キャラクターの座標を画面表示する処理
 	ImGui::Begin("PlayerPos");
@@ -257,6 +297,24 @@ void Player::Attack()
 {
 	if (input_->PushKey(DIK_SPACE)) 
 	{
+		// 弾の速度
+		/*
+		弾の速度ベクトル(1frmの移動量)を設定する。
+		この場合は1frmにつきZ方向に1.0f進む設定。
+		*/
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+
+		// 速度ベクトルを自機の向きに合わせて回転させる
+		/*
+		開店前の、Z方向向きのベクトルに自キャラの向きと同じ回転をかけることで、
+		自キャラと同じ向きのベクトルになる。
+		この計算を発射する瞬間の一度だけ行うことで、発射後は最初の向きを保ったまま
+		同じ角度で進む。
+		*/
+		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+
+
 		// 弾があれば開放する
 		/*if (bullet_)
 		{
@@ -269,7 +327,7 @@ void Player::Attack()
 
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
 
 		// 弾を登録する
 		bullets_.push_back(newBullet);
