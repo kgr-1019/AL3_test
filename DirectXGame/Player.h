@@ -4,6 +4,7 @@
 #include"Input.h"
 #include"Vector3.h"
 #include"PlayerBullet.h"
+#include<list>
 
 // 関数の宣言
 Vector3 Add(const Vector3& translation, const Vector3& move);
@@ -20,6 +21,8 @@ class Player {
 
 public:// メンバ関数
 
+	/// デストラクタ
+	~Player();
 
 	/// 初期化
 	void Initialize(Model* model, uint32_t textureHandle);
@@ -36,7 +39,7 @@ public:// メンバ関数
 	/// 描画
 	void Draw(ViewProjection& viewProjection);
 
-	
+
 
 private:// メンバ変数
 
@@ -54,5 +57,9 @@ private:// メンバ変数
 
 	PlayerBullet* bullet_ = nullptr;
 
-
+	// 弾
+	// listの導入
+	// PlayerBulletのポインタのリスト。配列みたいな性質を持つリストで複数管理することによって
+	// 複数のUpdateとDrawがまとめて呼び出せるようになった。
+	std::list<PlayerBullet*> bullets_; // 配列みたいなもの(コンテナ)になったので、複数形のsを追加しておく
 };

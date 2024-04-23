@@ -128,6 +128,14 @@ Matrix4x4 MakeAffineMatrix(const Vector3& S, const Vector3& R, const Vector3& T)
 	return result;
 }
 
+Player::~Player() 
+{ 
+	// 弾のポインタが１つの時は１回deleteすればよかったが、
+	// 複数になったのでfor文で回して全てのポインタを開放する必要がある。
+	for (PlayerBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
 
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 
@@ -215,10 +223,15 @@ void Player::Update() {
 	// キャラクター攻撃処理
 	Attack();
 
+
 	// 弾更新
-	if (bullet_)
+	// for文でリスト内のすべてのPlayerBulletについて1個1個処理していく。
+	for (PlayerBullet* bullet : bullets_)// 範囲for文。コンテナや配列を簡潔に扱うためのfor文の別表現。
 	{
-		bullet_->Update();
+		// PlayerBulletのポインタのリストからPlayerBulletのポインタを1個づつ
+		// 取り出しながら処理を回していく。
+		// PlayerBullet* がリスト内の要素1個分の型。
+		bullet->Update();
 	}
 }
 
@@ -244,12 +257,22 @@ void Player::Attack()
 {
 	if (input_->PushKey(DIK_SPACE)) 
 	{
+		// 弾があれば開放する
+		/*if (bullet_)
+		{
+			delete bullet_;
+			bullet_ = nullptr;
+		}*/
+		// ↑ポインタが複数持てて、前の弾を指すポインタを残しておけるから、
+		// 　メモリリークの心配がなくなるので解放する必要がなくなる。
+
+
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, worldTransform_.translation_);
 
 		// 弾を登録する
-		bullet_ = newBullet;
+		bullets_.push_back(newBullet);
 	}
 }
 
@@ -260,9 +283,10 @@ void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
 	// 弾描画
-	if (bullet_)
+	// 全部の弾の描画を呼び出す。
+	for (PlayerBullet* bullet : bullets_)
 	{
-		bullet_->Draw(viewProjection);
+		bullet->Draw(viewProjection);
 	}
 
 }
