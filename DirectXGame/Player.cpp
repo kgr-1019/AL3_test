@@ -105,7 +105,7 @@ Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
 }
 
 // アフィン変換
-Matrix4x4 MakeAffineMatrix(const Vector3& S, const Matrix4x4& R, const Vector3& T) 
+Matrix4x4 MakeAffineMatrix(const Vector3& S, const Vector3& R, const Vector3& T) 
 {
 	Matrix4x4 result{};
 
@@ -192,9 +192,9 @@ void Player::Update() {
 	Matrix4x4 rotationXMatrix = MakeRotateXMatrix(worldTransform_.rotation_);
 	Matrix4x4 rotationYMatrix = MakeRotateYMatrix(worldTransform_.rotation_);
 	Matrix4x4 rotationZMatrix = MakeRotateZMatrix(worldTransform_.rotation_);
-	Matrix4x4 rotationMatrix = Multiply(rotationXMatrix, Multiply(rotationYMatrix, rotationZMatrix));
+	Matrix4x4 rotationXYZMatrix = Multiply(rotationXMatrix, Multiply(rotationYMatrix, rotationZMatrix));
 	// 平行、スケーリング、回転行列を合成
-	Matrix4x4 matWorldMatrix = Multiply(scaleMatrix, Multiply(rotationMatrix, translateMatrix));
+	Matrix4x4 matWorldMatrix = Multiply(scaleMatrix, Multiply(rotationXYZMatrix, translateMatrix));
 
 	// 行列更新
 	worldTransform_.matWorld_ = matWorldMatrix;
