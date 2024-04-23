@@ -3,10 +3,6 @@
 #include"ImGuiManager.h"
 
 
-// 関数のプロトタイプ宣言
-Vector3 Add(const Vector3& translation, const Vector3& move);
-	
-
 // 関数の定義
 
 // 座標移動（ベクトルの加算）
@@ -34,13 +30,13 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 }
 
 // X軸回転行列
-Matrix4x4 MakeRotateXMatrix(const Vector3& rotate) {
+Matrix4x4 MakeRotateXMatrix(float rotate) {
 	Matrix4x4 result{};
 
-	result.m[1][1] = std::cos(rotate.x);
-	result.m[1][2] = std::sin(rotate.x);
-	result.m[2][1] = -std::sin(rotate.x);
-	result.m[2][2] = std::cos(rotate.x);
+	result.m[1][1] = std::cos(rotate);
+	result.m[1][2] = std::sin(rotate);
+	result.m[2][1] = -std::sin(rotate);
+	result.m[2][2] = std::cos(rotate);
 	result.m[0][0] = 1;
 	result.m[3][3] = 1;
 
@@ -48,27 +44,27 @@ Matrix4x4 MakeRotateXMatrix(const Vector3& rotate) {
 }
 
 // Y軸回転行列
-Matrix4x4 MakeRotateYMatrix(const Vector3& rotate) {
+Matrix4x4 MakeRotateYMatrix(float rotate) {
 	Matrix4x4 result{};
 
-	result.m[0][0] = std::cos(rotate.y);
-	result.m[0][2] = -std::sin(rotate.y);
+	result.m[0][0] = std::cos(rotate);
+	result.m[0][2] = -std::sin(rotate);
 	result.m[1][1] = 1;
-	result.m[2][0] = std::sin(rotate.y);
-	result.m[2][2] = std::cos(rotate.y);
+	result.m[2][0] = std::sin(rotate);
+	result.m[2][2] = std::cos(rotate);
 	result.m[3][3] = 1;
 
 	return result;
 }
 
 // Z軸回転行列
-Matrix4x4 MakeRotateZMatrix(const Vector3& rotate) {
+Matrix4x4 MakeRotateZMatrix(float rotate) {
 	Matrix4x4 result{};
 
-	result.m[0][0] = std::cos(rotate.z);
-	result.m[0][1] = std::sin(rotate.z);
-	result.m[1][0] = -std::sin(rotate.z);
-	result.m[1][1] = std::cos(rotate.z);
+	result.m[0][0] = std::cos(rotate);
+	result.m[0][1] = std::sin(rotate);
+	result.m[1][0] = -std::sin(rotate);
+	result.m[1][1] = std::cos(rotate);
 	result.m[2][2] = 1;
 	result.m[3][3] = 1;
 
@@ -109,15 +105,21 @@ Matrix4x4 MakeAffineMatrix(const Vector3& S, const Vector3& R, const Vector3& T)
 {
 	Matrix4x4 result{};
 
-	result.m[0][0] = S.x * R.m[0][0];
-	result.m[0][1] = S.x * R.m[0][1];
-	result.m[0][2] = S.x * R.m[0][2];
-	result.m[1][0] = S.y * R.m[1][0];
-	result.m[1][1] = S.y * R.m[1][1];
-	result.m[1][2] = S.y * R.m[1][2];
-	result.m[2][0] = S.z * R.m[2][0];
-	result.m[2][1] = S.z * R.m[2][1];
-	result.m[2][2] = S.z * R.m[2][2];
+	// 回転行列
+	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(R.x);
+	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(R.y);
+	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(R.z);
+	Matrix4x4 rotateXYZMatrix = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
+
+	result.m[0][0] = S.x * rotateXYZMatrix.m[0][0];
+	result.m[0][1] = S.x * rotateXYZMatrix.m[0][1];
+	result.m[0][2] = S.x * rotateXYZMatrix.m[0][2];
+	result.m[1][0] = S.y * rotateXYZMatrix.m[1][0];
+	result.m[1][1] = S.y * rotateXYZMatrix.m[1][1];
+	result.m[1][2] = S.y * rotateXYZMatrix.m[1][2];
+	result.m[2][0] = S.z * rotateXYZMatrix.m[2][0];
+	result.m[2][1] = S.z * rotateXYZMatrix.m[2][1];
+	result.m[2][2] = S.z * rotateXYZMatrix.m[2][2];
 	result.m[3][0] = T.x;
 	result.m[3][1] = T.y;
 	result.m[3][2] = T.z;
@@ -189,9 +191,9 @@ void Player::Update() {
 	// スケーリング行列
 	Matrix4x4 scaleMatrix = MakeScaleMatrix(worldTransform_.scale_);
 	// 回転行列
-	Matrix4x4 rotationXMatrix = MakeRotateXMatrix(worldTransform_.rotation_);
-	Matrix4x4 rotationYMatrix = MakeRotateYMatrix(worldTransform_.rotation_);
-	Matrix4x4 rotationZMatrix = MakeRotateZMatrix(worldTransform_.rotation_);
+	Matrix4x4 rotationXMatrix = MakeRotateXMatrix(worldTransform_.rotation_.x);
+	Matrix4x4 rotationYMatrix = MakeRotateYMatrix(worldTransform_.rotation_.y);
+	Matrix4x4 rotationZMatrix = MakeRotateZMatrix(worldTransform_.rotation_.z);
 	Matrix4x4 rotationXYZMatrix = Multiply(rotationXMatrix, Multiply(rotationYMatrix, rotationZMatrix));
 	// 平行、スケーリング、回転行列を合成
 	Matrix4x4 matWorldMatrix = Multiply(scaleMatrix, Multiply(rotationXYZMatrix, translateMatrix));
@@ -220,7 +222,7 @@ void Player::Update() {
 	}
 }
 
-
+// 旋回する
 void Player::Rotate()
 {
 	// 回転の速さ[ラジアン/frame]

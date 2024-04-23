@@ -1,8 +1,6 @@
 #include"WorldTransform.h"
 #include"Player.h"
 
-
-
 void WorldTransform::UpdateMatrix()
 {
 	// 平行、スケーリング、回転行列を合成
