@@ -38,9 +38,10 @@ void GameScene::Initialize() {
 	// 自キャラの初期化
 	player_->Initialize(model_,textureHandle_);
 
+	// 敵の初期化(nullじゃないときだけ実行)
 	if (enemy_ != nullptr) 
 	{
-		enemy_->Initialize(model_, position_, velocity_);
+		enemy_->Initialize(model_, position_, velocity_, approachVelocity_, leaveVelocity_);
 	}
 	
 	// デバッグカメラの生成

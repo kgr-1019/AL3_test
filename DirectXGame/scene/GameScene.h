@@ -61,8 +61,10 @@ private: // メンバ変数
 
 	// 敵
 	Enemy* enemy_ = nullptr;
-	Vector3 position_ = {0, 0, -20};
-	Vector3 velocity_ = {0, 0, -0.1f};
+	Vector3 position_ = {0, 2, 20};// 初期位置
+	Vector3 velocity_ = {0, 0, -0.1f};// 移動速度
+	Vector3 approachVelocity_ = {0, 0, -0.1f};// 接近フェーズ速度
+	Vector3 leaveVelocity_ = {-0.1f, 0.1f, 0};// 離脱フェーズ速度
 
 	uint32_t textureHandle_ = 0;// テクスチャハンドル
 

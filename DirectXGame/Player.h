@@ -51,7 +51,7 @@ private:// メンバ変数
 	Model* model_ = nullptr;
 
 	// テクスチャハンドル
-	uint32_t textureHandle_ = 0u;
+	uint32_t textureHandle_ = 0;
 
 	// キーボード入力
 	Input* input_ = nullptr;
