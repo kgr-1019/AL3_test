@@ -61,8 +61,8 @@ private: // メンバ変数
 
 	// 敵
 	Enemy* enemy_ = nullptr;
-	Vector3 position_ = {0, 2, 20};// 初期位置
-	Vector3 velocity_ = {0, 0, -0.1f};// 移動速度
+	Vector3 position_ = {5, 2, 60};// 初期位置
+	Vector3 velocity_ = {0, 0, -0.05f};// 移動速度
 	Vector3 approachVelocity_ = {0, 0, -0.1f};// 接近フェーズ速度
 	Vector3 leaveVelocity_ = {-0.1f, 0.1f, 0};// 離脱フェーズ速度
 

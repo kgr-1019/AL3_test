@@ -171,27 +171,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 void Player::Update() 
 {
-	// デスフラグの立った弾を削除
-	/*
-	死んだ弾を削除する処理。
-	std::list のメンバ関数である remove_if() は、条件に当てはまる要素を
-	リストから排除する関数。
-	条件判定用の関数を渡す必要があるのだが、このように true か false を返す
-	ラムダ式を指定すると便利。
-
-	true を返した弾は list から取り除かれる。
-	削除条件を満たした場合に delete した上で true を返すことで、インスタンスの
-	解放と list からの除外を両立させる。
-	*/
-	bullets_.remove_if([](PlayerBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
-
-
+	
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
 
@@ -273,6 +253,26 @@ void Player::Update()
 		// PlayerBullet* がリスト内の要素1個分の型。
 		bullet->Update();
 	}
+
+	// デスフラグの立った弾を削除
+	/*
+	死んだ弾を削除する処理。
+	std::list のメンバ関数である remove_if() は、条件に当てはまる要素を
+	リストから排除する関数。
+	条件判定用の関数を渡す必要があるのだが、このように true か false を返す
+	ラムダ式を指定すると便利。
+
+	true を返した弾は list から取り除かれる。
+	削除条件を満たした場合に delete した上で true を返すことで、インスタンスの
+	解放と list からの除外を両立させる。
+	*/
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
 }
 
 // 旋回する

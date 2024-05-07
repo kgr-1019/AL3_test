@@ -56,6 +56,7 @@ private:// メンバ変数
 	// キーボード入力
 	Input* input_ = nullptr;
 
+	// 自機弾
 	PlayerBullet* bullet_ = nullptr;
 
 	// 弾

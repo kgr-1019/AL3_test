@@ -2,6 +2,9 @@
 #include"Model.h"
 #include"Vector3.h"
 #include "WorldTransform.h"
+#include"EnemyBullet.h"
+#include<list>
+#include"Input.h"
 class Enemy 
 {
 public:// メンバ関数
@@ -56,4 +59,12 @@ private:// メンバ変数
 	単に Approach と指定するのではなく、どの列挙型に属するのかを指定する。
 	*/
 	Phase phase_ = Phase::Approach;
+
+	// 敵弾
+	EnemyBullet* enemyBullet_ = nullptr;
+
+	// listの導入
+	// PlayerBulletのポインタのリスト。配列みたいな性質を持つリストで複数管理することによって
+	// 複数のUpdateとDrawがまとめて呼び出せるようになった。
+	std::list<EnemyBullet*>enemyBullets_; // 配列みたいなもの(コンテナ)になったので、複数形のsを追加しておく
 };
