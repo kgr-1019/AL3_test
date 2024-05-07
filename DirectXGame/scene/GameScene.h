@@ -9,6 +9,7 @@
 #include "WorldTransform.h"
 #include"Player.h"
 #include"DebugCamera.h"
+#include"Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -57,6 +58,11 @@ private: // メンバ変数
 
 	// 自キャラ
 	Player* player_ = nullptr;
+
+	// 敵
+	Enemy* enemy_ = nullptr;
+	Vector3 position_ = {0, 0, -20};
+	Vector3 velocity_ = {0, 0, -0.1f};
 
 	uint32_t textureHandle_ = 0;// テクスチャハンドル
 
