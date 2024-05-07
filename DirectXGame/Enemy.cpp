@@ -53,6 +53,9 @@ void Enemy::Update()
 		worldTransform_.translation_ = Add(worldTransform_.translation_, approachVelocity_);
 		
 		// 既定の位置に到達したら離脱
+		/*
+		接近フェーズ中に条件を満たしたら離脱フェーズに移行する
+		*/
 		if (worldTransform_.translation_.z < 0.0f)
 		{
 			phase_ = Phase::Leave;
