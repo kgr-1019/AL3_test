@@ -9,9 +9,13 @@ class Enemy
 {
 public:// メンバ関数
 
+	~Enemy();
+
 	void Initialize(Model* model, const Vector3& position, const Vector3& velocity, const Vector3& appvelocity, const Vector3& leavelocity);
 
 	void Update();
+
+	void Fire();
 
 	void Draw(const ViewProjection& viewProjection);
 
@@ -30,6 +34,12 @@ public:// メンバ関数
 		Approach,// 接近する
 		Leave,// 離脱する
 	};
+
+	// 発射間隔
+	static const int kFireInterval = 60;
+
+	// 接近フェーズ初期化
+	void Approach();
 
 private:// メンバ変数
 
@@ -60,11 +70,11 @@ private:// メンバ変数
 	*/
 	Phase phase_ = Phase::Approach;
 
-	// 敵弾
-	EnemyBullet* enemyBullet_ = nullptr;
-
 	// listの導入
 	// PlayerBulletのポインタのリスト。配列みたいな性質を持つリストで複数管理することによって
 	// 複数のUpdateとDrawがまとめて呼び出せるようになった。
 	std::list<EnemyBullet*>enemyBullets_; // 配列みたいなもの(コンテナ)になったので、複数形のsを追加しておく
+
+	// 発射タイマー
+	int32_t ShotTimer = 0;
 };

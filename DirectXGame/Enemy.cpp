@@ -24,7 +24,18 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	leaveVelocity_ = leaveVelocity;
 
 	// 発射処理の呼び出し
-	enemyBullet_->Fire();
+	Fire();
+	// 接近フェーズ初期化
+	Approach();
+}
+
+Enemy::~Enemy()
+{
+	// 弾のポインタが１つの時は１回deleteすればよかったが、
+	// 複数になったのでfor文で回して全てのポインタを開放する必要がある。
+	for (EnemyBullet* enemyBullet : enemyBullets_) {
+		delete enemyBullet;
+	}
 }
 
 void Enemy::Update()
@@ -101,17 +112,28 @@ void Enemy::Update()
 		}
 		return false;
 	});
+
+	// 発射タイマーカウントダウン
+	ShotTimer--;
+
+	if (ShotTimer <= -50)
+	{
+		// 弾を発射
+		Fire();
+		// 発射タイマーを初期化
+		ShotTimer = kFireInterval;
+	}
 }
 
 
-void EnemyBullet::Fire()
+void Enemy::Fire()
 {
 	// 弾の速度
 	/*
 	弾の速度ベクトル(1frmの移動量)を設定する。
 	この場合は1frmにつきZ方向に1.0f進む設定。
 	*/
-	const float kBulletSpeed = 1.0f;
+	const float kBulletSpeed = -1.0f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
 	// 速度ベクトルを自機の向きに合わせて回転させる
@@ -137,9 +159,15 @@ void EnemyBullet::Fire()
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 	// 弾を登録する
-	//enemyBullets_.push_back(newBullet);
+	enemyBullets_.push_back(newBullet);
 };
 
+// 接近フェーズの初期化
+void Enemy::Approach()
+{
+	// 発射タイマーを初期化
+	ShotTimer = kFireInterval;
+}
 
 void Enemy::Draw(const ViewProjection& viewProjection) 
 {

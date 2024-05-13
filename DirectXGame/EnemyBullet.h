@@ -10,8 +10,6 @@ public:// メンバ関数
 
 	void Update();
 
-	void Fire();
-
 	void Draw(const ViewProjection& viewProjection);
 
 	bool IsDead() const { return isDead_; }
