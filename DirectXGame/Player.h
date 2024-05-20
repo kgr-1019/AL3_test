@@ -40,7 +40,8 @@ public:// メンバ関数
 	/// 描画
 	void Draw(ViewProjection& viewProjection);
 
-
+	// ワールド座標を取得
+	Vector3 GetWorldPosition();
 
 private:// メンバ変数
 

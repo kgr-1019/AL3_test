@@ -38,6 +38,9 @@ void GameScene::Initialize() {
 	// 自キャラの初期化
 	player_->Initialize(model_,textureHandle_);
 
+	// 敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
+
 	// 敵の初期化(nullじゃないときだけ実行)
 	if (enemy_ != nullptr) 
 	{

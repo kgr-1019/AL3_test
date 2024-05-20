@@ -5,6 +5,26 @@
 #include"EnemyBullet.h"
 #include<list>
 #include"Input.h"
+
+// 自機クラスの前方宣言
+/*
+敵に自キャラを貸し出す
+ 
+弾を発射するのは敵だが、自機狙いのベクトルを計算するには
+自キャラの座標が情報として必要。
+
+しかし Enemy.h で Player.h をインクルードすると
+Enemy が Player に依存してしまう。
+(Player がないと Enemy が成立しない状況)
+
+C++ではこういう場合の苦肉の策として、インクルードの代わりに
+クラスの前方宣言を行う。
+
+クラスの前方宣言を行うことで、インクルードせずに
+そのクラスのポインタを持つことができる。
+*/
+class Player;
+
 class Enemy 
 {
 public:// メンバ関数
@@ -18,6 +38,14 @@ public:// メンバ関数
 	void Fire();
 
 	void Draw(const ViewProjection& viewProjection);
+
+	// 接近フェーズ初期化
+	void Approach();
+
+	void SetPlayer(Player* player) { player_ = player; }
+
+	// ワールド座標を取得
+	Vector3 GetWorldPosition();
 
 	// 行動フェーズ
 	/*
@@ -38,9 +66,7 @@ public:// メンバ関数
 	// 発射間隔
 	static const int kFireInterval = 60;
 
-	// 接近フェーズ初期化
-	void Approach();
-
+	
 private:// メンバ変数
 
 	// ワールド変換データ
@@ -77,4 +103,7 @@ private:// メンバ変数
 
 	// 発射タイマー
 	int32_t ShotTimer = 0;
+
+	// 自キャラ
+	Player* player_ = nullptr;
 };

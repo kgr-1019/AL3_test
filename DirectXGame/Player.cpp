@@ -169,6 +169,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 
+
 void Player::Update() 
 {
 	
@@ -205,8 +206,6 @@ void Player::Update()
 	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
-
-
 
 
 	// 座標移動(ベクトルの加算)
@@ -275,6 +274,8 @@ void Player::Update()
 	});
 }
 
+
+
 // 旋回する
 void Player::Rotate()
 {
@@ -332,6 +333,17 @@ void Player::Attack()
 		// 弾を登録する
 		bullets_.push_back(newBullet);
 	}
+}
+
+// ワールド変換
+Vector3 Player::GetWorldPosition() {
+	Vector3 worldPos{};
+
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
 }
 
 
