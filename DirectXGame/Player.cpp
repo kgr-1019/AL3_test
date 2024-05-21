@@ -16,6 +16,24 @@ Vector3 Add(const Vector3& translation, const Vector3& move) {
 	return result;
 }
 
+// 減算
+Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
+	Vector3 subtract{};
+	subtract.x = v1.x - v2.x;
+	subtract.y = v1.y - v2.y;
+	subtract.z = v1.z - v2.z;
+	return subtract;
+}
+
+// スカラー倍
+Vector3 Multiply(float k, const Vector3& v1) {
+	Vector3 multiply{};
+	multiply.x = k * v1.x;
+	multiply.y = k * v1.y;
+	multiply.z = k * v1.z;
+	return multiply;
+}
+
 // 拡大縮小行列
 Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 	Matrix4x4 result{};
@@ -97,6 +115,16 @@ Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
 	result.m[3][2] = translate.z;
 
 	return result;
+}
+
+
+
+// 正規化
+Vector3 Normalize(const Vector3& v2) {
+	Vector3 normalize{};
+	normalize.x = v2.x / sqrtf(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z), normalize.y = v2.y / sqrtf(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z),
+	normalize.z = v2.z / sqrtf(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);
+	return normalize;
 }
 
 // アフィン変換

@@ -8,6 +8,8 @@
 
 // 関数の宣言
 Vector3 Add(const Vector3& translation, const Vector3& move);
+Vector3 Subtract(const Vector3& v1, const Vector3& v2);
+Vector3 Multiply(float k, const Vector3& v1);
 Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 Matrix4x4 MakeRotateXMatrix(float rotate);
 Matrix4x4 MakeRotateYMatrix(float rotate);
@@ -16,7 +18,7 @@ Matrix4x4 Multiply(const Matrix4x4& rotateX, const Matrix4x4& rotateYZ);
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 Matrix4x4 MakeAffineMatrix(const Vector3& S, const Vector3& R, const Vector3& T);
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);// ベクトル変換
-
+Vector3 Normalize(const Vector3& v2);
 
 class Player {
 

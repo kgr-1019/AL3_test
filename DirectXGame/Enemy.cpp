@@ -83,15 +83,9 @@ void Enemy::Update()
 	}
 
 
-	// 弾更新
-	// for文でリスト内のすべてのPlayerBulletについて1個1個処理していく。
-	for (EnemyBullet* enemyBullet : enemyBullets_) // 範囲for文。コンテナや配列を簡潔に扱うためのfor文の別表現。
-	{
-		// PlayerBulletのポインタのリストからPlayerBulletのポインタを1個づつ
-		// 取り出しながら処理を回していく。
-		// PlayerBullet* がリスト内の要素1個分の型。
-		enemyBullet->Update();
-	}
+	//worldTransform_.translation_.z += velocity_.z;
+
+	
 
 	// デスフラグの立った弾を削除
 	/*
@@ -123,6 +117,16 @@ void Enemy::Update()
 		// 発射タイマーを初期化
 		ShotTimer = kFireInterval;
 	}
+
+	// 弾更新
+	// for文でリスト内のすべてのPlayerBulletについて1個1個処理していく。
+	for (EnemyBullet* enemyBullet : enemyBullets_) // 範囲for文。コンテナや配列を簡潔に扱うためのfor文の別表現。
+	{
+		// PlayerBulletのポインタのリストからPlayerBulletのポインタを1個づつ
+		// 取り出しながら処理を回していく。
+		// PlayerBullet* がリスト内の要素1個分の型。
+		enemyBullet->Update();
+	}
 }
 
 
@@ -133,8 +137,20 @@ void Enemy::Fire()
 	弾の速度ベクトル(1frmの移動量)を設定する。
 	この場合は1frmにつきZ方向に1.0f進む設定。
 	*/
-	const float kBulletSpeed = -1.0f;
+	const float kBulletSpeed = 0.05f;
 	Vector3 velocity(0, 0, kBulletSpeed);
+
+
+	//// 自キャラのワールド座標を取得する
+	//player_->GetWorldPosition();
+	//// 敵キャラのワールド座標を取得する
+	//GetWorldPosition();
+	// 敵キャラ->自キャラの差分ベクトルを求める
+	Vector3 difference = Subtract(player_->GetWorldPosition(), GetWorldPosition());
+	// ベクトルの正規化
+	Normalize(difference);
+	// 
+	difference = Multiply(kBulletSpeed, difference);
 
 
 	// 速度ベクトルを自機の向きに合わせて回転させる
@@ -157,7 +173,7 @@ void Enemy::Fire()
 
 	// 弾を生成し、初期化
 	EnemyBullet* newBullet = new EnemyBullet();
-	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	newBullet->Initialize(model_, worldTransform_.translation_, difference);
 
 	// 弾を登録する
 	enemyBullets_.push_back(newBullet);
