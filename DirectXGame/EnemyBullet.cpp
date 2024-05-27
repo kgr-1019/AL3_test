@@ -53,7 +53,19 @@ void EnemyBullet::Update()
 	worldTransform_.UpdateMatrix();
 };
 
+// ワールド変換
+Vector3 Player::GetWorldPosition() {
+	Vector3 worldPos{};
 
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
+
+// 衝突を検出したら呼び出されるコールバック関数
+void EnemyBullet::OnCollision() { isDead_ = true; };
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection) 
 {

@@ -47,6 +47,9 @@ public:// メンバ関数
 	// ワールド座標を取得
 	Vector3 GetWorldPosition();
 
+	// 衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
+
 	// 行動フェーズ
 	/*
 	状態遷移の実装にもいろいろな方法があるが共通して行うこととして
@@ -66,6 +69,8 @@ public:// メンバ関数
 	// 発射間隔
 	static const int kFireInterval = 60;
 
+	// 弾リストを取得
+	const std::list<EnemyBullet*>& GetBullets() const { return enemyBullets_; }
 	
 private:// メンバ変数
 

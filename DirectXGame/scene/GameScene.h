@@ -47,6 +47,8 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	void CheckAllCollisions();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -58,8 +60,16 @@ private: // メンバ変数
 
 	// 自キャラ
 	Player* player_ = nullptr;
+	float playerRad_ = 1.0f;
+
+	// 自弾半径
+	float playerBulletRad_ = 1.0f;
+
+	// 敵弾半径
+	float enemyBulletRad_ = 1.0f;
 
 	// 敵
+	float enemyRad_ = 1.0f;
 	Enemy* enemy_ = nullptr;
 	Vector3 position_ = {5, 2, 60};// 初期位置
 	Vector3 velocity_ = {0, 0, -0.05f};// 移動速度
