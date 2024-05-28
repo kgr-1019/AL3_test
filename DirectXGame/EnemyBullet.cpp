@@ -54,7 +54,7 @@ void EnemyBullet::Update()
 };
 
 // ワールド変換
-Vector3 Player::GetWorldPosition() {
+Vector3 EnemyBullet::GetWorldPosition() {
 	Vector3 worldPos{};
 
 	worldPos.x = worldTransform_.matWorld_.m[3][0];

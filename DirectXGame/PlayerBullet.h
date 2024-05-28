@@ -26,6 +26,9 @@ public:
 	*/
 	bool IsDead() const { return isDead_; }
 
+	// ワールド変換
+	Vector3 GetWorldPosition();
+
 	// 衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
 

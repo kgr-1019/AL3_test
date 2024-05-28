@@ -97,12 +97,14 @@ void GameScene::Update() {
 		viewProjection_.UpdateMatrix();
 	}
 
+	// 当たり判定
+	CheckAllCollisions();
 }
 
 void GameScene::CheckAllCollisions()
 {
 	// 判定対象AとBの座標
-	Vector3 posA, posB;
+	Vector3 posA, posB, posC, posD;
 
 	// 自弾リストの取得
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
@@ -129,12 +131,42 @@ void GameScene::CheckAllCollisions()
 	}
 
 	#pragma endregion
-
-	#pragma region 
 	
+	#pragma region 
+	// 自弾と敵キャラ
+	posC = enemy_->GetWorldPosition();
+
+	for (PlayerBullet* bullet : playerBullets) {
+
+		posD = bullet->GetWorldPosition();
+
+		float distance = (posD.x - posC.x) * (posD.x - posC.x) + (posD.y - posC.y) * (posD.y - posC.y) + (posD.z - posC.z) * (posD.z - posC.z);
+		if (distance <= (enemyRad_ + playerBulletRad_) * (enemyRad_ + playerBulletRad_)) {
+			enemy_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
     #pragma endregion
 
-	#pragma region // 自弾と敵弾の当たり判定
+	#pragma region 
+	// 自弾と敵弾の当たり判定
+	for (PlayerBullet* playerBullet : playerBullets) 
+	{
+		for (EnemyBullet* enemyBullet : enemyBullets) 
+		{
+			// 自弾の座標
+			posD = playerBullet->GetWorldPosition();
+			// 敵弾の座標
+			posB = enemyBullet->GetWorldPosition();
+
+			float distance = (posD.x - posB.x) * (posD.x - posB.x) + (posD.y - posB.y) * (posD.y - posB.y) + (posD.z - posB.z) * (posD.z - posB.z);
+			if (distance <= (enemyBulletRad_ + playerBulletRad_) * (enemyBulletRad_ + playerBulletRad_)) {
+				playerBullet->OnCollision();
+				enemyBullet->OnCollision();
+			}
+		}
+	}
+
     #pragma endregion
 }
 

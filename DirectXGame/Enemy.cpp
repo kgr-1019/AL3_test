@@ -186,7 +186,7 @@ void Enemy::Approach()
 	ShotTimer = kFireInterval;
 }
 
-
+// ワールド変換
 Vector3 Enemy::GetWorldPosition()
 {
 	Vector3 worldPos{};
@@ -198,6 +198,8 @@ Vector3 Enemy::GetWorldPosition()
 	return worldPos;
 }
 
+// 当たり判定
+void Enemy::OnCollision(){};
 
 void Enemy::Draw(const ViewProjection& viewProjection) 
 {
