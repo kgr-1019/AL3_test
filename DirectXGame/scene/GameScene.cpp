@@ -2,7 +2,6 @@
 #include "TextureManager.h"
 #include <cassert>
 #include"AxisIndicator.h"
-#include"Enemy.h"
 
 GameScene::GameScene() {}
 
@@ -61,6 +60,10 @@ void GameScene::Initialize() {
 	// Skydome の初期化
 	skydome_->Initialize(modelSkydome_,textureHandle_);
 
+	// レールカメラの生成
+	railCamera_ = new RailCamera();
+
+	railCamera_->Initialize(worldTransform);
 
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
