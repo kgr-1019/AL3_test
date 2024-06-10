@@ -64,6 +64,7 @@ private: // メンバ変数
 	// 自キャラ
 	Player* player_ = nullptr;
 	float playerRad_ = 1.0f;
+	Vector3 playerPosition = {0, 0, 50.0f};
 
 	// 自弾半径
 	float playerBulletRad_ = 1.0f;
@@ -89,6 +90,8 @@ private: // メンバ変数
 
 	// レールカメラ
 	RailCamera* railCamera_ = nullptr;
+	Vector3 railCameraPosition = {0.0f, 0.0f, -100.0f};
+	Vector3 railCameraRotate = {0.0f, 0.0f, 0.0f};
 
 	/// <summary>
 	/// ゲームシーン用

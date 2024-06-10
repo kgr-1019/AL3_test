@@ -40,7 +40,7 @@ void GameScene::Initialize() {
 	enemy_ = new Enemy();
 
 	// 自キャラの初期化
-	player_->Initialize(model_,textureHandle_);
+	player_->Initialize(model_,textureHandle_,playerPosition);
 
 	// 敵キャラに自キャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
@@ -63,12 +63,16 @@ void GameScene::Initialize() {
 	// レールカメラの生成
 	railCamera_ = new RailCamera();
 
-	railCamera_->Initialize(worldTransform);
+	railCamera_->Initialize(railCameraPosition, railCameraRotate);
+
 
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+
+	// 自キャラとレールカメラの親子関係を結ぶ
+	player_->SetParent(&railCamera_->GetWorldTransform());
 }
 
 void GameScene::Update() {
@@ -82,6 +86,7 @@ void GameScene::Update() {
 	// Skydome の更新
 	skydome_->Update();
 
+	
 
 	// デバッグカメラ有効無効切り替え
 	#ifdef _DEBUG
@@ -110,8 +115,11 @@ void GameScene::Update() {
 		// ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
 	} else {
-		// ビュープロジェクショ行列の更新と転送
-		viewProjection_.UpdateMatrix();
+		// レールカメラの更新
+		railCamera_->Update();
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
 	}
 
 	// 当たり判定

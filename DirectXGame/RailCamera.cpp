@@ -1,13 +1,16 @@
 #include "RailCamera.h"
-
-void RailCamera::Initialize(WorldTransform& worldTransform) 
-{ 
+#include"imgui.h"
+void RailCamera::Initialize(const Vector3& railCameraPosition, const Vector3& railCameraRotate) { 
 	// ワールドトランスフォームの初期設定
-	worldTransform_.translation_ = worldTransform.translation_;
-	worldTransform_.rotation_ = worldTransform.rotation_;
+	worldTransform_.translation_ = railCameraPosition;
+	worldTransform_.rotation_ = railCameraRotate;
 
+	// ビュープロジェクションのfarZを適度に大きい値に変更する
+	viewProjection_.farZ = 2000;
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
+
+	worldTransform_.Initialize();
 }
 
 void RailCamera::Update()
@@ -21,12 +24,14 @@ void RailCamera::Update()
 	// ワールドトランスフォームのワールド行列を再計算
 	worldTransform_.UpdateMatrix();
 
+	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+
 	// カメラオブジェクトのワールド行列からビュー行列を計算する
 	viewProjection_.matView = Inverse(worldTransform_.matWorld_);
 
 	// カメラの座標を画面表示する処理
 	ImGui::Begin("Camera");
-	ImGui::DragFloat3("inputFloat3", worldTransform_.translation_.x,0.01f);
-	ImGui::DragFloat3("inputFloat3", worldTransform_.rotation_.x,0.01f);
+	ImGui::DragFloat3("translate", &worldTransform_.translation_.x,0.01f);
+	ImGui::DragFloat3("rotation", &worldTransform_.rotation_.x,0.01f);
 	ImGui::End();
 }

@@ -2,7 +2,6 @@
 #include"cassert"
 #include"ImGuiManager.h"
 
-
 // 関数の定義
 
 // 座標移動（ベクトルの加算）
@@ -252,7 +251,7 @@ Player::~Player()
 	}
 }
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, uint32_t textureHandle,const Vector3& playerPosition) {
 
 	// NULLポインタチェック
 	assert(model);
@@ -260,6 +259,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	// 引数として受け取ったデータをメンバ変数に記録する
 	model_ = model;
 	textureHandle_ = textureHandle;
+	worldTransform_.translation_ = playerPosition;
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
@@ -324,7 +324,7 @@ void Player::Update()
 	Matrix4x4 matWorldMatrix = Multiply(scaleMatrix, Multiply(rotationXYZMatrix, translateMatrix));
 
 	// 行列更新
-	worldTransform_.matWorld_ = matWorldMatrix;
+	worldTransform_.UpdateMatrix();
 
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
@@ -396,7 +396,7 @@ void Player::Rotate()
 
 void Player::Attack() 
 {
-	if (input_->PushKey(DIK_SPACE)) 
+	if (input_->TriggerKey(DIK_SPACE)) 
 	{
 		// 弾の速度
 		/*
@@ -428,7 +428,7 @@ void Player::Attack()
 
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
+		newBullet->Initialize(model_, GetWorldPosition(), velocity);
 
 		// 弾を登録する
 		bullets_.push_back(newBullet);
@@ -448,6 +448,12 @@ Vector3 Player::GetWorldPosition() {
 
 // 衝突を検出したら呼び出されるコールバック関数
 void Player::OnCollision() {};
+
+// 親子関係を結ぶ
+void Player::SetParent(const WorldTransform* parent)
+{
+	worldTransform_.parent_ = parent;
+}
 
 void Player::Draw(ViewProjection& viewProjection) {
 

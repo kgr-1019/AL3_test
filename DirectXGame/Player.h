@@ -29,7 +29,7 @@ public:// メンバ関数
 	~Player();
 
 	/// 初期化
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle,const Vector3& playerPosition);
 	
 	/// 更新
 	void Update();
@@ -51,6 +51,9 @@ public:// メンバ関数
 
 	// 弾リストを取得
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+
+	// 親となるワールドトランスフォームを設定するための関数
+	void SetParent(const WorldTransform* parent);
 
 private:// メンバ変数
 
