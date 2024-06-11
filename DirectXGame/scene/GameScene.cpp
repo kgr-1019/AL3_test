@@ -11,6 +11,11 @@ GameScene::~GameScene() {
 	delete debugCamera_;// デバッグカメラ
 	delete enemy_;// 敵
 	delete modelSkydome_;// Skydome
+	// 弾のポインタが１つの時は１回deleteすればよかったが、
+	// 複数になったのでfor文で回して全てのポインタを開放する必要がある。
+	for (EnemyBullet* enemyBullet : enemyBullets_) {
+		delete enemyBullet;
+	}
 }
 
 
@@ -27,44 +32,47 @@ void GameScene::Initialize() {
 	model_ = Model::Create();
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
+
 	// ビュープロジェクションのfarZを適度に大きい値に変更する
 	viewProjection_.farZ = 2000;
-
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
+
+
 	// 自キャラの生成
 	player_ = new Player();
-
 	// 敵キャラの生成
 	enemy_ = new Enemy();
+	// デバッグカメラの生成
+	debugCamera_ = new DebugCamera(1280, 720);
+	// Skydome の生成
+	skydome_ = new Skydome();
+	// レールカメラの生成
+	railCamera_ = new RailCamera();
+
+
 
 	// 自キャラの初期化
 	player_->Initialize(model_,textureHandle_,playerPosition);
-
-	// 敵キャラに自キャラのアドレスを渡す
-	enemy_->SetPlayer(player_);
-
 	// 敵の初期化(nullじゃないときだけ実行)
 	if (enemy_ != nullptr) 
 	{
 		enemy_->Initialize(model_, position_, velocity_, approachVelocity_, leaveVelocity_);
+
+		// 敵キャラにゲームシーンを渡す
+		enemy_->SetGameScene(this);
 	}
-	
-	// デバッグカメラの生成
-	debugCamera_ = new DebugCamera(1280, 720);
-
-	// Skydome の生成
-	skydome_ = new Skydome();
-
 	// Skydome の初期化
 	skydome_->Initialize(modelSkydome_,textureHandle_);
-
-	// レールカメラの生成
-	railCamera_ = new RailCamera();
-
+	// railCamera の初期化
 	railCamera_->Initialize(railCameraPosition, railCameraRotate);
 
+
+
+	// 敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
+	
 
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
@@ -75,14 +83,12 @@ void GameScene::Initialize() {
 	player_->SetParent(&railCamera_->GetWorldTransform());
 }
 
-void GameScene::Update() {
-
-// 自キャラの更新
+void GameScene::Update() 
+{
+	// 自キャラの更新
 	player_->Update();
-
 	// 敵の更新
 	enemy_->Update();
-
 	// Skydome の更新
 	skydome_->Update();
 
@@ -122,10 +128,22 @@ void GameScene::Update() {
 		viewProjection_.TransferMatrix();
 	}
 
-	// 当たり判定
+	// 当たり判定呼び出し
 	CheckAllCollisions();
+
+
+	// 敵の弾更新
+	// for文でリスト内のすべてのPlayerBulletについて1個1個処理していく。
+	for (EnemyBullet* enemyBullet : enemyBullets_) // 範囲for文。コンテナや配列を簡潔に扱うためのfor文の別表現。
+	{
+		// PlayerBulletのポインタのリストからPlayerBulletのポインタを1個づつ
+		// 取り出しながら処理を回していく。
+		// PlayerBullet* がリスト内の要素1個分の型。
+		enemyBullet->Update();
+	}
 }
 
+// 当たり判定
 void GameScene::CheckAllCollisions()
 {
 	// 判定対象AとBの座標
@@ -196,6 +214,13 @@ void GameScene::CheckAllCollisions()
 }
 
 
+void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet)
+{
+	// リストに登録する
+	enemyBullets_.push_back(enemyBullet);
+}
+
+
 void GameScene::Draw() {
 
 	// コマンドリストの取得
@@ -225,12 +250,16 @@ void GameScene::Draw() {
 
 	// 自キャラの描画
 	player_->Draw(viewProjection_);
-
 	// 敵の描画
 	enemy_->Draw(viewProjection_);
-
 	// Skydome の描画
 	skydome_->Draw(viewProjection_);
+	// 敵の弾描画
+	// 全部の弾の描画を呼び出す
+	for (EnemyBullet* enemyBullet : enemyBullets_) {
+		enemyBullet->Draw(viewProjection_);
+	}
+
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

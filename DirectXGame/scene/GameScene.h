@@ -51,6 +51,9 @@ public: // メンバ関数
 
 	void CheckAllCollisions();
 
+	// 敵の弾を登録する関数
+	void AddEnemyBullet(EnemyBullet* enemyBullet);
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -79,6 +82,7 @@ private: // メンバ変数
 	Vector3 velocity_ = {0, 0, -0.05f};// 移動速度
 	Vector3 approachVelocity_ = {0, 0, -0.1f};// 接近フェーズ速度
 	Vector3 leaveVelocity_ = {-0.1f, 0.1f, 0};// 離脱フェーズ速度
+	std::list<EnemyBullet*> enemyBullets_;// リスト
 
 	uint32_t textureHandle_ = 0;// テクスチャハンドル
 

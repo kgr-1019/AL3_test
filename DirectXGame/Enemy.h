@@ -6,6 +6,9 @@
 #include<list>
 #include"Input.h"
 
+// ゲームシーンクラスの前方宣言
+class GameScene;
+
 // 自機クラスの前方宣言
 /*
 敵に自キャラを貸し出す
@@ -72,6 +75,9 @@ public:// メンバ関数
 	// 弾リストを取得
 	const std::list<EnemyBullet*>& GetBullets() const { return enemyBullets_; }
 	
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+
+
 private:// メンバ変数
 
 	// ワールド変換データ
@@ -79,6 +85,9 @@ private:// メンバ変数
 
 	// モデル
 	Model* model_ = nullptr;
+
+	// ゲームシーン
+	GameScene* gameScene_ = nullptr;
 
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;

@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include"Player.h"
 #include"cassert"
+#include"GameScene.h"
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity, const Vector3& approachVelocity, const Vector3& leaveVelocity) {
 	// NULLポインタチェック
 	assert(model);
@@ -31,11 +32,7 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 
 Enemy::~Enemy()
 {
-	// 弾のポインタが１つの時は１回deleteすればよかったが、
-	// 複数になったのでfor文で回して全てのポインタを開放する必要がある。
-	for (EnemyBullet* enemyBullet : enemyBullets_) {
-		delete enemyBullet;
-	}
+	
 }
 
 void Enemy::Update()
@@ -83,10 +80,6 @@ void Enemy::Update()
 	}
 
 
-	//worldTransform_.translation_.z += velocity_.z;
-
-	
-
 	// デスフラグの立った弾を削除
 	/*
 	死んだ弾を削除する処理。
@@ -118,15 +111,7 @@ void Enemy::Update()
 		ShotTimer = kFireInterval;
 	}
 
-	// 弾更新
-	// for文でリスト内のすべてのPlayerBulletについて1個1個処理していく。
-	for (EnemyBullet* enemyBullet : enemyBullets_) // 範囲for文。コンテナや配列を簡潔に扱うためのfor文の別表現。
-	{
-		// PlayerBulletのポインタのリストからPlayerBulletのポインタを1個づつ
-		// 取り出しながら処理を回していく。
-		// PlayerBullet* がリスト内の要素1個分の型。
-		enemyBullet->Update();
-	}
+	
 }
 
 
@@ -177,6 +162,8 @@ void Enemy::Fire()
 
 	// 弾を登録する
 	enemyBullets_.push_back(newBullet);
+
+	gameScene_->AddEnemyBullet(newBullet);
 };
 
 // 接近フェーズの初期化
@@ -205,10 +192,4 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 {
 	// モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-
-	// 弾描画
-	// 全部の弾の描画を呼び出す。
-	for (EnemyBullet* enemyBullet : enemyBullets_) {
-		enemyBullet->Draw(viewProjection);
-	}
 }
