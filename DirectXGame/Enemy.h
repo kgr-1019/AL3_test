@@ -72,11 +72,10 @@ public:// メンバ関数
 	// 発射間隔
 	static const int kFireInterval = 60;
 
-	// 弾リストを取得
-	const std::list<EnemyBullet*>& GetBullets() const { return enemyBullets_; }
 	
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
+	bool IsDead() const { return isDead_; }
 
 private:// メンバ変数
 
@@ -110,14 +109,13 @@ private:// メンバ変数
 	*/
 	Phase phase_ = Phase::Approach;
 
-	// listの導入
-	// PlayerBulletのポインタのリスト。配列みたいな性質を持つリストで複数管理することによって
-	// 複数のUpdateとDrawがまとめて呼び出せるようになった。
-	std::list<EnemyBullet*>enemyBullets_; // 配列みたいなもの(コンテナ)になったので、複数形のsを追加しておく
-
+	
 	// 発射タイマー
 	int32_t ShotTimer = 0;
 
 	// 自キャラ
 	Player* player_ = nullptr;
+
+	// デスフラグ
+	bool isDead_ = false;
 };

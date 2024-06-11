@@ -80,25 +80,7 @@ void Enemy::Update()
 	}
 
 
-	// デスフラグの立った弾を削除
-	/*
-	死んだ弾を削除する処理。
-	std::list のメンバ関数である remove_if() は、条件に当てはまる要素を
-	リストから排除する関数。
-	条件判定用の関数を渡す必要があるのだが、このように true か false を返す
-	ラムダ式を指定すると便利。
-
-	true を返した弾は list から取り除かれる。
-	削除条件を満たした場合に delete した上で true を返すことで、インスタンスの
-	解放と list からの除外を両立させる。
-	*/
-	enemyBullets_.remove_if([](EnemyBullet* enemyBullet) {
-		if (enemyBullet->IsDead()) {
-			delete enemyBullet;
-			return true;
-		}
-		return false;
-	});
+	
 
 	// 発射タイマーカウントダウン
 	ShotTimer--;
@@ -160,8 +142,6 @@ void Enemy::Fire()
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, worldTransform_.translation_, difference);
 
-	// 弾を登録する
-	enemyBullets_.push_back(newBullet);
 
 	gameScene_->AddEnemyBullet(newBullet);
 };
@@ -185,8 +165,10 @@ Vector3 Enemy::GetWorldPosition()
 	return worldPos;
 }
 
+
 // 当たり判定
-void Enemy::OnCollision(){};
+void Enemy::OnCollision() { isDead_ = true; };
+
 
 void Enemy::Draw(const ViewProjection& viewProjection) 
 {
