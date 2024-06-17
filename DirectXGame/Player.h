@@ -5,6 +5,8 @@
 #include"Vector3.h"
 #include"PlayerBullet.h"
 #include<list>
+#include "Sprite.h"
+#include "TextureManager.h"
 
 // 関数の宣言
 Vector3 Add(const Vector3& translation, const Vector3& move);
@@ -16,6 +18,7 @@ Matrix4x4 MakeRotateYMatrix(float rotate);
 Matrix4x4 MakeRotateZMatrix(float rotate);
 Matrix4x4 Multiply(const Matrix4x4& rotateX, const Matrix4x4& rotateYZ);
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
+Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 Matrix4x4 Inverse(const Matrix4x4& m1);
 Matrix4x4 MakeAffineMatrix(const Vector3& S, const Vector3& R, const Vector3& T);
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);// ベクトル変換
@@ -45,6 +48,7 @@ public:// メンバ関数
 
 	// ワールド座標を取得
 	Vector3 GetWorldPosition();
+	Vector3 GetWorld3DReticlePosition();
 
 	// 衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
@@ -55,16 +59,25 @@ public:// メンバ関数
 	// 親となるワールドトランスフォームを設定するための関数
 	void SetParent(const WorldTransform* parent);
 
+	// レティクル2D描画
+	void DrawUI();
+
 private:// メンバ変数
 
 	// ワールド変換データ
 	WorldTransform worldTransform_;
+	// 3Dレティクル用ワールドトランスフォーム
+	WorldTransform worldTransform3DReticle_;
+
+	// 2Dレティクル用スプライト
+	Sprite* sprite2DReticle_ = nullptr;
 
 	// モデル
 	Model* model_ = nullptr;
 
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
+	uint32_t textureReticle_ = 0;
 
 	// キーボード入力
 	Input* input_ = nullptr;

@@ -97,7 +97,11 @@ private: // メンバ変数
 	std::list<EnemyBullet*> enemyBullets_;// リスト
 
 
-	uint32_t textureHandle_ = 0;// テクスチャハンドル
+	// テクスチャハンドル
+	uint32_t textureHandle_ = 0;
+	// レティクル用テクスチャ取得
+	uint32_t textureReticle = 0;
+
 
 	// デバックカメラ有効
 	bool isDebugCameraActive_ = false;

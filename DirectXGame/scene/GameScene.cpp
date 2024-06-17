@@ -31,6 +31,7 @@ void GameScene::Initialize() {
 
 	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("nyan.png");
+	textureReticle = TextureManager::Load("Reticle.png");
 
 	// 3Dモデルの生成
 	model_ = Model::Create();
@@ -394,6 +395,7 @@ void GameScene::Draw() {
 		enemyBullet->Draw(viewProjection_);
 	}
 
+	
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -402,6 +404,9 @@ void GameScene::Draw() {
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
+
+	// レティクル
+	player_->DrawUI();
 
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる

@@ -24,7 +24,7 @@ Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
 	return subtract;
 }
 
-// スカラー倍
+// 乗算
 Vector3 Multiply(float k, const Vector3& v1) {
 	Vector3 multiply{};
 	multiply.x = k * v1.x;
@@ -249,12 +249,19 @@ Player::~Player()
 	for (PlayerBullet* bullet : bullets_) {
 		delete bullet;
 	}
+	delete sprite2DReticle_;
 }
+
 
 void Player::Initialize(Model* model, uint32_t textureHandle,const Vector3& playerPosition) {
 
 	// NULLポインタチェック
 	assert(model);
+
+	// レティクル用テクスチャ取得
+	textureReticle_ = TextureManager::Load("Reticle.png");
+	// スプライト生成
+	sprite2DReticle_ = Sprite::Create(textureReticle_, {0});
 
 	// 引数として受け取ったデータをメンバ変数に記録する
 	model_ = model;
@@ -263,6 +270,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle,const Vector3& play
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	// 3Dレティクルのワールドトランスフォーム初期化
+	worldTransform3DReticle_.Initialize();
 
 	// シングルインスタンスを取得する
 	input_ = Input::GetInstance();
@@ -272,9 +281,33 @@ void Player::Initialize(Model* model, uint32_t textureHandle,const Vector3& play
 
 void Player::Update() 
 {
-	
+	// 自機のワールド座標から3Dレティクルのワールド座標を計算
+	// 自機から3Dレティクルへの距離
+	const float kDistancePlayerTo3DReticle = 50.0f;
+
+	// 自機から3Dレティクルへのオフセット(Z+向き)
+	Vector3 offset = {0, 0, 1.0f};
+
+	// 自機のワールド行列の回転を反映
+	offset = TransformNormal(offset, worldTransform_.matWorld_);
+
+	// ベクトルの長さを整える
+	offset = Multiply(kDistancePlayerTo3DReticle, Normalize(offset));
+
+	// 3Dレティクルの座標を設定
+	worldTransform3DReticle_.translation_ = Add(GetWorldPosition(), offset);
+	worldTransform3DReticle_.UpdateMatrix();
+
+	// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
+	Vector3 positionReticle = GetWorld3DReticlePosition();
+
+	// ビューポート行列
+	Matrix4x4 matViewport = MakeViewportMatrix(0,0WinApp,)
+
+
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
+
 
 	// キャラクターの移動速さ
 	const float kCharacterSpeed = 0.2f;
@@ -325,9 +358,6 @@ void Player::Update()
 
 	// 行列更新
 	worldTransform_.UpdateMatrix();
-
-	// 行列を定数バッファに転送
-	worldTransform_.TransferMatrix();
 
 
 
@@ -406,24 +436,9 @@ void Player::Attack()
 		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
 
-		// 速度ベクトルを自機の向きに合わせて回転させる
-		/*
-		開店前の、Z方向向きのベクトルに自キャラの向きと同じ回転をかけることで、
-		自キャラと同じ向きのベクトルになる。
-		この計算を発射する瞬間の一度だけ行うことで、発射後は最初の向きを保ったまま
-		同じ角度で進む。
-		*/
-		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
-
-
-		// 弾があれば開放する
-		/*if (bullet_)
-		{
-			delete bullet_;
-			bullet_ = nullptr;
-		}*/
-		// ↑ポインタが複数持てて、前の弾を指すポインタを残しておけるから、
-		// 　メモリリークの心配がなくなるので解放する必要がなくなる。
+		// 自機から照準オブジェクトへのベクトル
+		velocity = Subtract(worldTransform3DReticle_.translation_, GetWorldPosition());
+		velocity = Multiply(kBulletSpeed, Normalize(velocity));
 
 
 		// 弾を生成し、初期化
@@ -446,6 +461,18 @@ Vector3 Player::GetWorldPosition() {
 	return worldPos;
 }
 
+// ワールド変換
+Vector3 Player::GetWorld3DReticlePosition() {
+	Vector3 worldPos{};
+
+	worldPos.x = worldTransform3DReticle_.matWorld_.m[3][0];
+	worldPos.y = worldTransform3DReticle_.matWorld_.m[3][1];
+	worldPos.z = worldTransform3DReticle_.matWorld_.m[3][2];
+
+	return worldPos;
+}
+
+
 // 衝突を検出したら呼び出されるコールバック関数
 void Player::OnCollision() {};
 
@@ -455,10 +482,18 @@ void Player::SetParent(const WorldTransform* parent)
 	worldTransform_.parent_ = parent;
 }
 
+
+// レティクル2D描画
+void Player::DrawUI() { sprite2DReticle_->Draw(); }
+
+
 void Player::Draw(ViewProjection& viewProjection) {
 
 	//3Dモデルを描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+
+	// 3Dレティクルを描画
+	model_->Draw(worldTransform3DReticle_, viewProjection, textureReticle_);
 
 	// 弾描画
 	// 全部の弾の描画を呼び出す。
