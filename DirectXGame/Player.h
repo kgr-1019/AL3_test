@@ -7,6 +7,8 @@
 #include<list>
 #include "Sprite.h"
 #include "TextureManager.h"
+#include<WinApp.h>
+#include"ViewProjection.h"
 
 // 関数の宣言
 Vector3 Add(const Vector3& translation, const Vector3& move);
@@ -23,6 +25,7 @@ Matrix4x4 Inverse(const Matrix4x4& m1);
 Matrix4x4 MakeAffineMatrix(const Vector3& S, const Vector3& R, const Vector3& T);
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);// ベクトル変換
 Vector3 Normalize(const Vector3& v2);
+Vector3 Transform(const Vector3& point, const Matrix4x4& transformMatrix);
 
 class Player {
 
@@ -35,7 +38,7 @@ public:// メンバ関数
 	void Initialize(Model* model, uint32_t textureHandle,const Vector3& playerPosition);
 	
 	/// 更新
-	void Update();
+	void Update(const ViewProjection& viewProjection);
 
 	/// 旋回(回転)
 	void Rotate();

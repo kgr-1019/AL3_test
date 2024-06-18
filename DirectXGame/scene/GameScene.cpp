@@ -33,6 +33,7 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("nyan.png");
 	textureReticle = TextureManager::Load("Reticle.png");
 
+
 	// 3Dモデルの生成
 	model_ = Model::Create();
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
@@ -84,7 +85,7 @@ void GameScene::Update()
 	UpdateEnemyPopCommands();
 
 	// 自キャラの更新
-	player_->Update();
+	player_->Update(viewProjection_);
 	// 敵の更新
 	for (Enemy* enemy : enemies_)
 	{

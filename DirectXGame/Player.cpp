@@ -2,6 +2,7 @@
 #include"cassert"
 #include"ImGuiManager.h"
 
+
 // 関数の定義
 
 // 座標移動（ベクトルの加算）
@@ -116,6 +117,21 @@ Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
 	return result;
 }
 
+// ビューポート変換行列
+Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
+	Matrix4x4 result{};
+
+	result.m[0][0] = width / 2;
+	result.m[1][1] = -height / 2;
+	result.m[2][2] = maxDepth - minDepth;
+	result.m[3][0] = left + (width / 2);
+	result.m[3][1] = top + (height / 2);
+	result.m[3][2] = minDepth;
+	result.m[3][3] = 1;
+
+	return result;
+}
+
 // 逆行列
 Matrix4x4 Inverse(const Matrix4x4& m1) {
 	Matrix4x4 result{};
@@ -198,6 +214,22 @@ Vector3 Normalize(const Vector3& v2) {
 	return normalize;
 }
 
+// 座標変換
+Vector3 Transform(const Vector3& point, const Matrix4x4& transformMatrix) {
+	Vector3 result{};
+
+	result.x = point.x * transformMatrix.m[0][0] + point.y * transformMatrix.m[1][0] + point.z * transformMatrix.m[2][0] + 1.0f * transformMatrix.m[3][0];
+	result.y = point.x * transformMatrix.m[0][1] + point.y * transformMatrix.m[1][1] + point.z * transformMatrix.m[2][1] + 1.0f * transformMatrix.m[3][1];
+	result.z = point.x * transformMatrix.m[0][2] + point.y * transformMatrix.m[1][2] + point.z * transformMatrix.m[2][2] + 1.0f * transformMatrix.m[3][2];
+	float w = point.x * transformMatrix.m[0][3] + point.y * transformMatrix.m[1][3] + point.z * transformMatrix.m[2][3] + 1.0f * transformMatrix.m[3][3];
+	assert(w != 0.0f);
+	result.x /= w;
+	result.y /= w;
+	result.z /= w;
+
+	return result;
+}
+
 // アフィン変換
 Matrix4x4 MakeAffineMatrix(const Vector3& S, const Vector3& R, const Vector3& T) 
 {
@@ -260,8 +292,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle,const Vector3& play
 
 	// レティクル用テクスチャ取得
 	textureReticle_ = TextureManager::Load("Reticle.png");
-	// スプライト生成
-	sprite2DReticle_ = Sprite::Create(textureReticle_, {0});
+	// レティクルスプライト生成
+	sprite2DReticle_ = Sprite::Create(textureReticle_, {0, 0}, {1, 1, 1, 1}, {0.5f, 0.5f});
 
 	// 引数として受け取ったデータをメンバ変数に記録する
 	model_ = model;
@@ -279,30 +311,33 @@ void Player::Initialize(Model* model, uint32_t textureHandle,const Vector3& play
 
 
 
-void Player::Update() 
+void Player::Update(const ViewProjection& viewProjection) 
 {
+	//=====================レティクル========================//
+	
 	// 自機のワールド座標から3Dレティクルのワールド座標を計算
 	// 自機から3Dレティクルへの距離
 	const float kDistancePlayerTo3DReticle = 50.0f;
-
 	// 自機から3Dレティクルへのオフセット(Z+向き)
 	Vector3 offset = {0, 0, 1.0f};
-
 	// 自機のワールド行列の回転を反映
 	offset = TransformNormal(offset, worldTransform_.matWorld_);
-
 	// ベクトルの長さを整える
 	offset = Multiply(kDistancePlayerTo3DReticle, Normalize(offset));
-
 	// 3Dレティクルの座標を設定
 	worldTransform3DReticle_.translation_ = Add(GetWorldPosition(), offset);
 	worldTransform3DReticle_.UpdateMatrix();
-
 	// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
 	Vector3 positionReticle = GetWorld3DReticlePosition();
-
 	// ビューポート行列
-	Matrix4x4 matViewport = MakeViewportMatrix(0,0WinApp,)
+	Matrix4x4 matViewport = MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+	// ビュー行列とプロジェクション行列、ビューポート行列を合成する
+	Matrix4x4 matViewProjectionViewport = Multiply(Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
+	// ワールド➝スクリーン座標変換（ここで3Dから2Dになる）
+	positionReticle = Transform(positionReticle, matViewProjectionViewport);
+	// スプライトのレティクルに座標設定
+	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+
 
 
 	// キャラクターの移動ベクトル
@@ -493,7 +528,7 @@ void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
 	// 3Dレティクルを描画
-	model_->Draw(worldTransform3DReticle_, viewProjection, textureReticle_);
+	//model_->Draw(worldTransform3DReticle_, viewProjection, textureReticle_);
 
 	// 弾描画
 	// 全部の弾の描画を呼び出す。
