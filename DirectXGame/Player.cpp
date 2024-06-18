@@ -313,6 +313,16 @@ void Player::Initialize(Model* model, uint32_t textureHandle,const Vector3& play
 
 void Player::Update(const ViewProjection& viewProjection) 
 {
+	POINT mousePosition;
+	// マウス座標（スクリーン座標）を取得する
+	GetCursorPos(&mousePosition);
+
+	// クライアントエリア座標に変換する
+	HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	ScreenToClient(hwnd, &mousePosition);
+
+	mousePosition = sprite2DReticle_;
+
 	//=====================レティクル========================//
 	
 	// 自機のワールド座標から3Dレティクルのワールド座標を計算
