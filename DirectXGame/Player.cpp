@@ -328,13 +328,13 @@ void Player::Update(const ViewProjection& viewProjection)
 	worldTransform3DReticle_.translation_ = Add(GetWorldPosition(), offset);
 	worldTransform3DReticle_.UpdateMatrix();
 	// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
-	Vector3 positionReticle = GetWorld3DReticlePosition();
+	//positionReticle = GetWorld3DReticlePosition();
 	// ビューポート行列
 	Matrix4x4 matViewport = MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
 	// ビュー行列とプロジェクション行列、ビューポート行列を合成する
 	Matrix4x4 matViewProjectionViewport = Multiply(Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
 	// ワールド➝スクリーン座標変換（ここで3Dから2Dになる）
-	positionReticle = Transform(positionReticle, matViewProjectionViewport);
+	//positionReticle = Transform(positionReticle, matViewProjectionViewport);
 	// スプライトのレティクルに座標設定
 	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
 
@@ -358,8 +358,8 @@ void Player::Update(const ViewProjection& viewProjection)
 	Matrix4x4 matInverseVPV = Inverse(matVPV);
  
 	// スクリーン座標
-	Vector3 posNear = Vector3((float)mousePosition.x, (float)mousePosition.y, 0);
-	Vector3 posFar = Vector3((float)mousePosition.x, (float)mousePosition.y, 1);
+	Vector3 posNear = Vector3((float)positionReticle.x, (float)positionReticle.y, 0);
+	Vector3 posFar = Vector3((float)positionReticle.x, (float)positionReticle.y, 1);
 
 	// スクリーン座標系からワールド座標系へ
 	posNear = Transform(posNear, matInverseVPV);
@@ -411,7 +411,7 @@ void Player::Update(const ViewProjection& viewProjection)
 	if (Input::GetInstance()->GetJoystickState(0, joyState))
 	{
 		positionReticle.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * 5.0f;
-		positionReticle.y += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * 5.0f;
+		positionReticle.y -= (float)joyState.Gamepad.sThumbRY / SHRT_MAX * 5.0f;
 
 		// スプライトの座標変更を反映
 		sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));

@@ -88,6 +88,8 @@ private:// メンバ変数
 	// 自機弾
 	PlayerBullet* bullet_ = nullptr;
 
+	Vector3 positionReticle = {640.0f,360.0f,0.0f};
+
 	// 弾
 	// listの導入
 	// PlayerBulletのポインタのリスト。配列みたいな性質を持つリストで複数管理することによって
