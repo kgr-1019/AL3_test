@@ -313,16 +313,6 @@ void Player::Initialize(Model* model, uint32_t textureHandle,const Vector3& play
 
 void Player::Update(const ViewProjection& viewProjection) 
 {
-	POINT mousePosition;
-	// マウス座標（スクリーン座標）を取得する
-	GetCursorPos(&mousePosition);
-
-	// クライアントエリア座標に変換する
-	HWND hwnd = WinApp::GetInstance()->GetHwnd();
-	ScreenToClient(hwnd, &mousePosition);
-
-	mousePosition = sprite2DReticle_;
-
 	//=====================レティクル========================//
 	
 	// 自機のワールド座標から3Dレティクルのワールド座標を計算
@@ -348,6 +338,35 @@ void Player::Update(const ViewProjection& viewProjection)
 	// スプライトのレティクルに座標設定
 	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
 
+
+	//===============マウス座標を取得する=================//
+
+	POINT mousePosition;
+	// マウス座標（スクリーン座標）を取得する
+	GetCursorPos(&mousePosition);
+
+	// クライアントエリア座標に変換する
+	HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	ScreenToClient(hwnd, &mousePosition);
+
+	// マウス座標（スクリーン座標）を取得する
+	sprite2DReticle_->SetPosition(Vector2(mousePosition.x, mousePosition.y));
+
+	// ビュー行列とプロジェクション行列、ビューポート行列を合成する
+	Matrix4x4 matVPV = Multiply(Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
+	// 合成行列の逆行列を計算する
+	Matrix4x4 matInverseVPV = Inverse(matVPV);
+ 
+	// スクリーン座標
+	Vector3 posNear = Vector3(mousePosition.x, mousePosition.y, 0);
+	Vector3 posFar = Vector3(mousePosition.x, mousePosition.y, 1);
+
+	// スクリーン座標系からワールド座標系へ
+	posNear = Transform(posNear, matInverseVPV);
+	posFar = Transform(posFar, matInverseVPV);
+
+	// マウスレイの方向
+	Vector3 mouseDirection = Subtract()
 
 
 	// キャラクターの移動ベクトル
