@@ -541,7 +541,7 @@ void Player::Attack()
 	// ゲームパッド未接続なら何もせず抜ける
 	if (!Input::GetInstance()->GetJoystickState(0, joyState))
 	{
-		//return;
+		return;
 	}
 
 	// Rトリガーを押していたら

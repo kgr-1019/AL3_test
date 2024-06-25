@@ -74,6 +74,8 @@ private:// メンバ変数
 
 	// 2Dレティクル用スプライト
 	Sprite* sprite2DReticle_ = nullptr;
+	// レティクル初期位置
+	Vector3 positionReticle = {640.0f, 360.0f, 0.0f};
 
 	// モデル
 	Model* model_ = nullptr;
@@ -87,8 +89,6 @@ private:// メンバ変数
 
 	// 自機弾
 	PlayerBullet* bullet_ = nullptr;
-
-	Vector3 positionReticle = {640.0f,360.0f,0.0f};
 
 	// 弾
 	// listの導入
