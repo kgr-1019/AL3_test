@@ -186,21 +186,22 @@ void GameScene::CheckAllCollisions()
 	
 
 	#pragma region
-	// 自キャラと敵弾の当たり判定
-	posA = player_->GetWorldPosition();
+	
 	// 自キャラと敵弾全ての当たり判定
-	for (EnemyBullet* bullet : enemyBullets_)
+	for (EnemyBullet* enemyBullet : enemyBullets_)
 	{
+		// 自キャラと敵弾の当たり判定
+		posA = player_->GetWorldPosition();
 		// 敵弾の座標
-		posB = bullet->GetWorldPosition();
+		posD = enemyBullet->GetWorldPosition();
 
-		float distance = (posB.x - posA.x) * (posB.x - posA.x) + 
-			(posB.y - posA.y) * (posB.y - posA.y) + 
-			(posB.z - posA.z) * (posB.z - posA.z);
+		float distance = (posD.x - posA.x) * (posD.x - posA.x) + 
+			(posD.y - posA.y) * (posD.y - posA.y) + 
+			(posD.z - posA.z) * (posD.z - posA.z);
 		if (distance <= (playerRad_ + enemyBulletRad_) * (playerRad_ + enemyBulletRad_))
 		{
 			player_->OnCollision();
-			bullet->OnCollision();
+			enemyBullet->OnCollision();
 		}
 	}
 
@@ -208,18 +209,16 @@ void GameScene::CheckAllCollisions()
 	
 	#pragma region 
 	// 自弾と敵キャラ
-	
 
 	for (Enemy* enemy : enemies_) {
 		posC = enemy->GetWorldPosition();
-		for (PlayerBullet* bullet : playerBullets) {
-
-			posD = bullet->GetWorldPosition();
-
-			float distance = (posD.x - posC.x) * (posD.x - posC.x) + (posD.y - posC.y) * (posD.y - posC.y) + (posD.z - posC.z) * (posD.z - posC.z);
+		for (PlayerBullet* playerBullet : playerBullets) {
+			// 自弾の座標
+			posB = playerBullet->GetWorldPosition();
+			float distance = (posB.x - posC.x) * (posB.x - posC.x) + (posB.y - posC.y) * (posB.y - posC.y) + (posB.z - posC.z) * (posB.z - posC.z);
 			if (distance <= (enemyRad_ + playerBulletRad_) * (enemyRad_ + playerBulletRad_)) {
 				enemy->OnCollision();
-				bullet->OnCollision();
+				playerBullet->OnCollision();
 			}
 		}
 	}
@@ -229,12 +228,13 @@ void GameScene::CheckAllCollisions()
 	// 自弾と敵弾の当たり判定
 	for (PlayerBullet* playerBullet : playerBullets) 
 	{
+		// 自弾の座標
+		posB = playerBullet->GetWorldPosition();
 		for (EnemyBullet* enemyBullet : enemyBullets_) 
 		{
-			// 自弾の座標
-			posD = playerBullet->GetWorldPosition();
+			
 			// 敵弾の座標
-			posB = enemyBullet->GetWorldPosition();
+			posD = enemyBullet->GetWorldPosition();
 
 			float distance = (posD.x - posB.x) * (posD.x - posB.x) + (posD.y - posB.y) * (posD.y - posB.y) + (posD.z - posB.z) * (posD.z - posB.z);
 			if (distance <= (enemyBulletRad_ + playerBulletRad_) * (enemyBulletRad_ + playerBulletRad_)) {

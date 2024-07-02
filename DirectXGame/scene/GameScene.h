@@ -51,6 +51,7 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	// 当たり判定
 	void CheckAllCollisions();
 
 	// 敵の弾を登録する関数
@@ -78,7 +79,7 @@ private: // メンバ変数
 	// 自キャラ
 	Player* player_ = nullptr;
 	float playerRad_ = 1.0f;
-	Vector3 playerPosition = {0, 0, 50.0f};
+	Vector3 playerPosition = {0, 0, 20.0f};
 
 	// 自弾半径
 	float playerBulletRad_ = 1.0f;
@@ -111,7 +112,7 @@ private: // メンバ変数
 
 	// レールカメラ
 	RailCamera* railCamera_ = nullptr;
-	Vector3 railCameraPosition = {0.0f, 0.0f, -100.0f};
+	Vector3 railCameraPosition = {0.0f, 0.0f, -150.0f};
 	Vector3 railCameraRotate = {0.0f, 0.0f, 0.0f};
 
 	// 待機中フラグ

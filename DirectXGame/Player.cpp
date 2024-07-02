@@ -358,8 +358,8 @@ void Player::Update(const ViewProjection& viewProjection)
 	Matrix4x4 matInverseVPV = Inverse(matVPV);
  
 	// スクリーン座標
-	Vector3 posNear = Vector3((float)positionReticle.x, (float)positionReticle.y, 0);
-	Vector3 posFar = Vector3((float)positionReticle.x, (float)positionReticle.y, 1);
+	Vector3 posNear = Vector3((float)mousePosition.x, (float)mousePosition.y, 0);
+	Vector3 posFar = Vector3((float)mousePosition.x, (float)mousePosition.y, 1);
 
 	// スクリーン座標系からワールド座標系へ
 	posNear = Transform(posNear, matInverseVPV);
@@ -394,28 +394,28 @@ void Player::Update(const ViewProjection& viewProjection)
 	//=====ゲームパッド=====//
 
 	// ゲームパッドの状態を得る変数（XINPUT）
-	XINPUT_STATE joyState;
+	//XINPUT_STATE joyState;
 
-	// ゲームパッド状態取得
-	if (Input::GetInstance()->GetJoystickState(0, joyState)) 
-	{
-		move.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed;
-		move.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
-	}
+	//// ゲームパッド状態取得
+	//if (Input::GetInstance()->GetJoystickState(0, joyState)) 
+	//{
+	//	move.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed;
+	//	move.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
+	//}
 
 	// スプライトの現在座標を取得
-	Vector2 spritePosition = sprite2DReticle_->GetPosition();
+	//Vector2 spritePosition = sprite2DReticle_->GetPosition();
 
 
 	// ジョイスティック状態取得
-	if (Input::GetInstance()->GetJoystickState(0, joyState))
-	{
-		positionReticle.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * 5.0f;
-		positionReticle.y -= (float)joyState.Gamepad.sThumbRY / SHRT_MAX * 5.0f;
+	//if (Input::GetInstance()->GetJoystickState(0, joyState))
+	//{
+	//	positionReticle.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * 5.0f;
+	//	positionReticle.y -= (float)joyState.Gamepad.sThumbRY / SHRT_MAX * 5.0f;
 
-		// スプライトの座標変更を反映
-		sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
-	}
+	//	// スプライトの座標変更を反映
+	//	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+	//}
 
 
 
@@ -536,36 +536,36 @@ void Player::Rotate()
 
 void Player::Attack() 
 {
-	XINPUT_STATE joyState;
+	//XINPUT_STATE joyState;
 
-	// ゲームパッド未接続なら何もせず抜ける
-	if (!Input::GetInstance()->GetJoystickState(0, joyState))
-	{
-		return;
-	}
+	//// ゲームパッド未接続なら何もせず抜ける
+	//if (!Input::GetInstance()->GetJoystickState(0, joyState))
+	//{
+	//	return;
+	//}
 
-	// Rトリガーを押していたら
-	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
-	{
-		// 弾の速度
-		/*
-		弾の速度ベクトル(1frmの移動量)を設定する。
-		この場合は1frmにつきZ方向に1.0f進む設定。
-		*/
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
+	//// Rトリガーを押していたら
+	//if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
+	//{
+	//	// 弾の速度
+	//	/*
+	//	弾の速度ベクトル(1frmの移動量)を設定する。
+	//	この場合は1frmにつきZ方向に1.0f進む設定。
+	//	*/
+	//	const float kBulletSpeed = 1.0f;
+	//	Vector3 velocity(0, 0, kBulletSpeed);
 
-		// 自機から照準オブジェクトへのベクトル
-		velocity = Subtract(worldTransform3DReticle_.translation_, GetWorldPosition());
-		velocity = Multiply(kBulletSpeed, Normalize(velocity));
+	//	// 自機から照準オブジェクトへのベクトル
+	//	velocity = Subtract(worldTransform3DReticle_.translation_, GetWorldPosition());
+	//	velocity = Multiply(kBulletSpeed, Normalize(velocity));
 
-		// 弾を生成し、初期化
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, GetWorldPosition(), velocity);
+	//	// 弾を生成し、初期化
+	//	PlayerBullet* newBullet = new PlayerBullet();
+	//	newBullet->Initialize(model_, GetWorldPosition(), velocity);
 
-		// 弾を登録する
-		bullets_.push_back(newBullet);
-	}
+	//	// 弾を登録する
+	//	bullets_.push_back(newBullet);
+	//}
 
 
 	if (input_->TriggerKey(DIK_SPACE)) 

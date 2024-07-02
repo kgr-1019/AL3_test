@@ -26,7 +26,7 @@ private:
 	Vector3 velocity_ = {0, 0, 0.05f};
 
 	// 回転
-	Vector3 rotate_ = {0, 0, 0.005f};
+	Vector3 rotate_ = {0, 0, 0};
 
 	
 
