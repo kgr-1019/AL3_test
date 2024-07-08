@@ -67,10 +67,10 @@ void Enemy::Update()
 		/*
 		接近フェーズ中に条件を満たしたら離脱フェーズに移行する
 		*/
-		if (worldTransform_.translation_.z < -20.0f)
+		/*if (worldTransform_.translation_.z < -20.0f)
 		{
 			phase_ = Phase::Leave;
-		}
+		}*/
 		break;
 
 	case Phase::Leave:
@@ -104,7 +104,7 @@ void Enemy::Fire()
 	弾の速度ベクトル(1frmの移動量)を設定する。
 	この場合は1frmにつきZ方向に1.0f進む設定。
 	*/
-	const float kBulletSpeed = 0.05f;
+	const float kBulletSpeed = 0.005f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
 
