@@ -92,7 +92,7 @@ private: // メンバ変数
 	std::list<Enemy*> enemies_;// 敵リスト
 	std::stringstream enemyPopCommands;// 敵発生コマンド
 	Vector3 position_ = {5, 2, 80};// 初期位置
-	Vector3 velocity_ = {0, 0, -0.05f};// 移動速度
+	Vector3 velocity_ = {0, 0, -0.1f};// 移動速度
 	Vector3 approachVelocity_ = {0, 0, -0.1f};// 接近フェーズ速度
 	Vector3 leaveVelocity_ = {-0.1f, 0.1f, 0};// 離脱フェーズ速度
 	std::list<EnemyBullet*> enemyBullets_;// リスト
@@ -112,7 +112,7 @@ private: // メンバ変数
 
 	// レールカメラ
 	RailCamera* railCamera_ = nullptr;
-	Vector3 railCameraPosition = {0.0f, 0.0f, -150.0f};
+	Vector3 railCameraPosition = {0.0f, 5.0f, -150.0f};
 	Vector3 railCameraRotate = {0.0f, 0.0f, 0.0f};
 
 	// 待機中フラグ

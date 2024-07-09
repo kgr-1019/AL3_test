@@ -37,11 +37,18 @@ Enemy::~Enemy()
 
 void Enemy::Update()
 {
+
+	if (isStop_)
+	{
+		velocity_ = {0.0f, 0.0f, 0.0f};
+	}
+
 	//移動
 	worldTransform_.translation_ = Add(worldTransform_.translation_, velocity_);
 
 	// 行列を更新
 	worldTransform_.UpdateMatrix();
+
 
 	// 行動フェーズ
 	/*
@@ -56,28 +63,28 @@ void Enemy::Update()
 	プランナーが調整しやすいように別ファイルに分けたい。
 	(.txt とか .csv 、.json などにしてロード)
 	*/
-	switch (phase_)
-	{ 
-	case Phase::Approach:
-	default:
-		// 移動(ベクトルを加算)
-		worldTransform_.translation_ = Add(worldTransform_.translation_, approachVelocity_);
-		
-		// 既定の位置に到達したら離脱
-		/*
-		接近フェーズ中に条件を満たしたら離脱フェーズに移行する
-		*/
-		/*if (worldTransform_.translation_.z < -20.0f)
-		{
-			phase_ = Phase::Leave;
-		}*/
-		break;
+	//switch (phase_)
+	//{ 
+	//case Phase::Approach:
+	//default:
+	//	// 移動(ベクトルを加算)
+	//	worldTransform_.translation_ = Add(worldTransform_.translation_, approachVelocity_);
+	//	
+	//	// 既定の位置に到達したら離脱
+	//	/*
+	//	接近フェーズ中に条件を満たしたら離脱フェーズに移行する
+	//	*/
+	//	/*if (worldTransform_.translation_.z < -20.0f)
+	//	{
+	//		phase_ = Phase::Leave;
+	//	}*/
+	//	break;
 
-	case Phase::Leave:
-		// 移動(ベクトルを加算)
-		worldTransform_.translation_ = Add(worldTransform_.translation_, leaveVelocity_);
-		break;
-	}
+	//case Phase::Leave:
+	//	// 移動(ベクトルを加算)
+	//	worldTransform_.translation_ = Add(worldTransform_.translation_, leaveVelocity_);
+	//	break;
+	//}
 
 
 	
@@ -85,7 +92,7 @@ void Enemy::Update()
 	// 発射タイマーカウントダウン
 	ShotTimer--;
 
-	if (ShotTimer <= -50)
+	if (ShotTimer <= -200)
 	{
 		// 弾を発射
 		Fire();
@@ -168,6 +175,8 @@ Vector3 Enemy::GetWorldPosition()
 
 // 当たり判定
 void Enemy::OnCollision() { isDead_ = true; };
+
+ void Enemy::OnBulletCollision() { isStop_ = true; };
 
 
 void Enemy::Draw(const ViewProjection& viewProjection) 

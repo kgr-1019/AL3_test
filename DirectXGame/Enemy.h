@@ -53,6 +53,8 @@ public:// メンバ関数
 	// 衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
 
+	void OnBulletCollision();
+
 	// 行動フェーズ
 	/*
 	状態遷移の実装にもいろいろな方法があるが共通して行うこととして
@@ -76,6 +78,8 @@ public:// メンバ関数
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 	bool IsDead() const { return isDead_; }
+
+	bool IsStop() const { return isStop_; }
 
 private:// メンバ変数
 
@@ -118,4 +122,7 @@ private:// メンバ変数
 
 	// デスフラグ
 	bool isDead_ = false;
+
+	// 動きを止める
+	bool isStop_ = false;
 };

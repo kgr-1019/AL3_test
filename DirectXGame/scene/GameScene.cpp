@@ -66,10 +66,6 @@ void GameScene::Initialize() {
 	railCamera_->Initialize(railCameraPosition, railCameraRotate);
 
 
-
-	
-
-
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
@@ -173,6 +169,7 @@ void GameScene::Update()
 		}
 		return false;
 	});
+
 }
 
 // 当たり判定
@@ -217,7 +214,7 @@ void GameScene::CheckAllCollisions()
 			posB = playerBullet->GetWorldPosition();
 			float distance = (posB.x - posC.x) * (posB.x - posC.x) + (posB.y - posC.y) * (posB.y - posC.y) + (posB.z - posC.z) * (posB.z - posC.z);
 			if (distance <= (enemyRad_ + playerBulletRad_) * (enemyRad_ + playerBulletRad_)) {
-				enemy->OnCollision();
+				enemy->OnBulletCollision();
 				playerBullet->OnCollision();
 			}
 		}
