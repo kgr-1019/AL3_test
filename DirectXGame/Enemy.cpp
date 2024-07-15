@@ -94,10 +94,13 @@ void Enemy::Update()
 
 	if (ShotTimer <= -200)
 	{
-		// 弾を発射
-		Fire();
-		// 発射タイマーを初期化
-		ShotTimer = kFireInterval;
+		if (!isStop_) 
+		{
+			// 弾を発射
+			Fire();
+			// 発射タイマーを初期化
+			ShotTimer = kFireInterval;
+		}
 	}
 
 	
