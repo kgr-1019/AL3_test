@@ -8,7 +8,12 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() { 
 	delete model_;// 3Dモデルデータの解放
-	delete player_;// 自キャラの解放
+	if (player_ != nullptr) {
+		delete player_; // 自キャラの解放
+		for (Enemy* enemy : enemies_) {
+			delete enemy;
+		}
+	}
 	delete debugCamera_;// デバッグカメラ
 	delete modelSkydome_;// Skydome
 	// 弾のポインタが１つの時は１回deleteすればよかったが、
@@ -17,9 +22,7 @@ GameScene::~GameScene() {
 		delete enemyBullet;
 	}
 
-	for (Enemy* enemy : enemies_) {
-		delete enemy;
-	}
+	
 }
 
 
@@ -45,9 +48,10 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 
 
-
-	// 自キャラの生成
-	player_ = new Player();
+	//if (player_ != nullptr) {
+		// 自キャラの生成
+		player_ = new Player();
+	//}
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 	// Skydome の生成
@@ -56,10 +60,10 @@ void GameScene::Initialize() {
 	railCamera_ = new RailCamera();
 
 
-
-	// 自キャラの初期化
-	player_->Initialize(model_,textureHandle_,playerPosition);
-	
+	//if (player_ != nullptr) {
+		// 自キャラの初期化
+		player_->Initialize(model_, textureHandle_, playerPosition);
+	//}
 	// Skydome の初期化
 	skydome_->Initialize(modelSkydome_,textureHandle_);
 	// railCamera の初期化
@@ -71,8 +75,10 @@ void GameScene::Initialize() {
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-	// 自キャラとレールカメラの親子関係を結ぶ
-	player_->SetParent(&railCamera_->GetWorldTransform());
+	if (player_ != nullptr) {
+		// 自キャラとレールカメラの親子関係を結ぶ
+		player_->SetParent(&railCamera_->GetWorldTransform());
+	}
 }
 
 void GameScene::Update() 
@@ -81,11 +87,14 @@ void GameScene::Update()
 	UpdateEnemyPopCommands();
 
 	// 自キャラの更新
-	player_->Update(viewProjection_);
-	// 敵の更新
-	for (Enemy* enemy : enemies_)
-	{
-		enemy->Update();
+	if (player_ != nullptr) {
+
+		player_->Update(viewProjection_);
+
+		// 敵の更新
+		for (Enemy* enemy : enemies_) {
+			enemy->Update();
+		}
 	}
 	// Skydome の更新
 	skydome_->Update();
@@ -141,7 +150,7 @@ void GameScene::Update()
 	}
 
 
-	// デスフラグの立った弾を削除
+	// デスフラグの立ったオブジェクトを削除
 	/*
 	死んだ弾を削除する処理。
 	std::list のメンバ関数である remove_if() は、条件に当てはまる要素を
@@ -170,6 +179,10 @@ void GameScene::Update()
 		return false;
 	});
 
+	/*if (player_->IsDead()) 
+	{
+		
+	}*/
 }
 
 // 当たり判定
@@ -181,65 +194,76 @@ void GameScene::CheckAllCollisions()
 	// 自弾リストの取得
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
 	
-
 	#pragma region
+
 	
-	// 自キャラと敵弾全ての当たり判定
-	for (EnemyBullet* enemyBullet : enemyBullets_)
-	{
-		// 自キャラと敵弾の当たり判定
-		posA = player_->GetWorldPosition();
-		// 敵弾の座標
-		posD = enemyBullet->GetWorldPosition();
-
-		float distance = (posD.x - posA.x) * (posD.x - posA.x) + 
-			(posD.y - posA.y) * (posD.y - posA.y) + 
-			(posD.z - posA.z) * (posD.z - posA.z);
-		if (distance <= (playerRad_ + enemyBulletRad_) * (playerRad_ + enemyBulletRad_))
-		{
-			player_->OnCollision();
-			enemyBullet->OnCollision();
-		}
-	}
-
-	#pragma endregion
-	
-	#pragma region 
-	// 自弾と敵キャラ
-
-	for (Enemy* enemy : enemies_) {
-		posC = enemy->GetWorldPosition();
-		for (PlayerBullet* playerBullet : playerBullets) {
-			// 自弾の座標
-			posB = playerBullet->GetWorldPosition();
-			float distance = (posB.x - posC.x) * (posB.x - posC.x) + (posB.y - posC.y) * (posB.y - posC.y) + (posB.z - posC.z) * (posB.z - posC.z);
-			if (distance <= (enemyRad_ + playerBulletRad_) * (enemyRad_ + playerBulletRad_)) {
-				enemy->OnBulletCollision();
-				playerBullet->OnCollision();
+		// 自キャラと敵キャラ
+		for (Enemy* enemy : enemies_) {
+			// 敵の座標
+			posC = enemy->GetWorldPosition();
+			// 自キャラの座標
+			posA = player_->GetWorldPosition();
+			float distance = (posC.x - posA.x) * (posC.x - posA.x) + (posC.y - posA.y) * (posC.y - posA.y) + (posC.z - posA.z) * (posC.z - posA.z);
+			if (distance <= (playerRad_ + enemyRad_) * (playerRad_ + enemyRad_)) {
+				enemy->OnCollision();
+				player_->OnCollision();
 			}
 		}
-	}
-    #pragma endregion
 
-	#pragma region 
-	// 自弾と敵弾の当たり判定
-	for (PlayerBullet* playerBullet : playerBullets) 
-	{
-		// 自弾の座標
-		posB = playerBullet->GetWorldPosition();
-		for (EnemyBullet* enemyBullet : enemyBullets_) 
-		{
-			
+#pragma endregion
+
+#pragma region
+
+		// 自キャラと敵弾全ての当たり判定
+		for (EnemyBullet* enemyBullet : enemyBullets_) {
+			// 自キャラの座標
+			posA = player_->GetWorldPosition();
 			// 敵弾の座標
 			posD = enemyBullet->GetWorldPosition();
 
-			float distance = (posD.x - posB.x) * (posD.x - posB.x) + (posD.y - posB.y) * (posD.y - posB.y) + (posD.z - posB.z) * (posD.z - posB.z);
-			if (distance <= (enemyBulletRad_ + playerBulletRad_) * (enemyBulletRad_ + playerBulletRad_)) {
-				playerBullet->OnCollision();
+			float distance = (posD.x - posA.x) * (posD.x - posA.x) + (posD.y - posA.y) * (posD.y - posA.y) + (posD.z - posA.z) * (posD.z - posA.z);
+			if (distance <= (playerRad_ + enemyBulletRad_) * (playerRad_ + enemyBulletRad_)) {
+				player_->OnCollision();
 				enemyBullet->OnCollision();
 			}
 		}
-	}
+
+#pragma endregion
+
+#pragma region
+		// 自弾と敵キャラ
+
+		for (Enemy* enemy : enemies_) {
+			posC = enemy->GetWorldPosition();
+			for (PlayerBullet* playerBullet : playerBullets) {
+				// 自弾の座標
+				posB = playerBullet->GetWorldPosition();
+				float distance = (posB.x - posC.x) * (posB.x - posC.x) + (posB.y - posC.y) * (posB.y - posC.y) + (posB.z - posC.z) * (posB.z - posC.z);
+				if (distance <= (enemyRad_ + playerBulletRad_) * (enemyRad_ + playerBulletRad_)) {
+					enemy->OnBulletCollision();
+					playerBullet->OnCollision();
+				}
+			}
+		}
+#pragma endregion
+
+#pragma region
+		// 自弾と敵弾の当たり判定
+		for (PlayerBullet* playerBullet : playerBullets) {
+			// 自弾の座標
+			posB = playerBullet->GetWorldPosition();
+			for (EnemyBullet* enemyBullet : enemyBullets_) {
+
+				// 敵弾の座標
+				posD = enemyBullet->GetWorldPosition();
+
+				float distance = (posD.x - posB.x) * (posD.x - posB.x) + (posD.y - posB.y) * (posD.y - posB.y) + (posD.z - posB.z) * (posD.z - posB.z);
+				if (distance <= (enemyBulletRad_ + playerBulletRad_) * (enemyBulletRad_ + playerBulletRad_)) {
+					playerBullet->OnCollision();
+					enemyBullet->OnCollision();
+				}
+			}
+		}
 
     #pragma endregion
 }
@@ -378,13 +402,14 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	
 	// 自キャラの描画
 	player_->Draw(viewProjection_);
 	// 敵の描画
-	for (Enemy* enemy : enemies_)
-	{
+	for (Enemy* enemy : enemies_) {
 		enemy->Draw(viewProjection_);
 	}
+	
 	// Skydome の描画
 	skydome_->Draw(viewProjection_);
 	// 敵の弾描画
@@ -392,8 +417,6 @@ void GameScene::Draw() {
 	for (EnemyBullet* enemyBullet : enemyBullets_) {
 		enemyBullet->Draw(viewProjection_);
 	}
-
-	
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

@@ -53,6 +53,8 @@ public:// メンバ関数
 	Vector3 GetWorldPosition();
 	Vector3 GetWorld3DReticlePosition();
 
+	bool IsDead() const { return isDead_; }
+
 	// 衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
 
@@ -95,4 +97,7 @@ private:// メンバ変数
 	// PlayerBulletのポインタのリスト。配列みたいな性質を持つリストで複数管理することによって
 	// 複数のUpdateとDrawがまとめて呼び出せるようになった。
 	std::list<PlayerBullet*> bullets_; // 配列みたいなもの(コンテナ)になったので、複数形のsを追加しておく
+
+	// デスフラグ
+	bool isDead_ = false;
 };

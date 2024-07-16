@@ -177,7 +177,14 @@ Vector3 Enemy::GetWorldPosition()
 
 
 // 当たり判定
-void Enemy::OnCollision() { isDead_ = true; };
+void Enemy::OnCollision() 
+{
+	// 止まった敵だけ死ぬ
+	if (isStop_) 
+	{
+		isDead_ = true;
+	}
+};
 
  void Enemy::OnBulletCollision() { isStop_ = true; };
 
