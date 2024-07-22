@@ -66,6 +66,9 @@ public: // メンバ関数
 	// 敵発生
 	void OccurrenceEnemy(Vector3 position);
 
+	// デスフラグのgetter
+	bool IsFinished() const { return finished_; }
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -120,7 +123,6 @@ private: // メンバ変数
 	// 待機タイマー
 	uint32_t waitTimer = 0;
 
-	/// <summary>
-	/// ゲームシーン用
-	/// </summary>
+	// シーン終了フラグ
+	bool finished_ = false;
 };

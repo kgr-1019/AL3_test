@@ -100,4 +100,5 @@ private:// メンバ変数
 
 	// デスフラグ
 	bool isDead_ = false;
+	bool isFinished_ = false;
 };

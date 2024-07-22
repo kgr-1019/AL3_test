@@ -616,7 +616,10 @@ Vector3 Player::GetWorld3DReticlePosition() {
 
 
 // 衝突を検出したら呼び出されるコールバック関数
-void Player::OnCollision() { isDead_ = true; };
+void Player::OnCollision() { 
+	isDead_ = true; 
+	isFinished_ = true;
+};
 
 // 親子関係を結ぶ
 void Player::SetParent(const WorldTransform* parent)
