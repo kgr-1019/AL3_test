@@ -178,11 +178,6 @@ void GameScene::Update()
 		}
 		return false;
 	});
-
-	/*if (player_->IsDead()) 
-	{
-		
-	}*/
 }
 
 // 当たり判定
@@ -223,7 +218,7 @@ void GameScene::CheckAllCollisions()
 
 			float distance = (posD.x - posA.x) * (posD.x - posA.x) + (posD.y - posA.y) * (posD.y - posA.y) + (posD.z - posA.z) * (posD.z - posA.z);
 			if (distance <= (playerRad_ + enemyBulletRad_) * (playerRad_ + enemyBulletRad_)) {
-				player_->OnCollision();
+			    finished_ = true;
 				enemyBullet->OnCollision();
 			}
 		}

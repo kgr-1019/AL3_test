@@ -40,7 +40,7 @@ void Enemy::Update()
 
 	if (isStop_)
 	{
-		velocity_ = {0.0f, 0.0f, 0.0f};
+		velocity_ = {0.0f, 0.0f, -0.2f};
 	}
 
 	//移動

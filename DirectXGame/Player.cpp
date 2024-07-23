@@ -374,12 +374,12 @@ void Player::Update(const ViewProjection& viewProjection)
 	worldTransform3DReticle_.translation_ = Add(posNear, Multiply(kDistanceTestObject, mouseDirection));
 
 	// デバッグ文字表示
-	ImGui::Begin("Player");
+	/*ImGui::Begin("Player");
 	ImGui::Text("2DReticle:(%f,%f)", positionReticle.x, positionReticle.y);
 	ImGui::Text("Near:(%+.2f,%+.2f,%+.2)f", posNear.x, posNear.y, posNear.z);
 	ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
 	ImGui::Text("3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x, worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
-	ImGui::End();
+	ImGui::End();*/
 
 
 
@@ -471,7 +471,7 @@ void Player::Update(const ViewProjection& viewProjection)
 
 
 
-	// キャラクターの座標を画面表示する処理
+	 // キャラクターの座標を画面表示する処理
 	ImGui::Begin("PlayerPos");
 	ImGui::Text("Player %.02f,%.02f,%.02f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
 	ImGui::End();
@@ -512,6 +512,8 @@ void Player::Update(const ViewProjection& viewProjection)
 		}
 		return false;
 	});
+
+
 }
 
 
@@ -570,25 +572,30 @@ void Player::Attack()
 
 	if (input_->TriggerKey(DIK_SPACE)) 
 	{
-		// 弾の速度
-		/*
-		弾の速度ベクトル(1frmの移動量)を設定する。
-		この場合は1frmにつきZ方向に1.0f進む設定。
-		*/
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
+		// 弾の数制限
+		if (bulletCount > 0) {
 
-		// 自機から照準オブジェクトへのベクトル
-		velocity = Subtract(worldTransform3DReticle_.translation_, GetWorldPosition());
-		velocity = Multiply(kBulletSpeed, Normalize(velocity));
+			bulletCount--;
 
+			// 弾の速度
+			/*
+			弾の速度ベクトル(1frmの移動量)を設定する。
+			この場合は1frmにつきZ方向に1.0f進む設定。
+			*/
+			const float kBulletSpeed = 1.0f;
+			Vector3 velocity(0, 0, kBulletSpeed);
 
-		// 弾を生成し、初期化
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, GetWorldPosition(), velocity);
+			// 自機から照準オブジェクトへのベクトル
+			velocity = Subtract(worldTransform3DReticle_.translation_, GetWorldPosition());
+			velocity = Multiply(kBulletSpeed, Normalize(velocity));
 
-		// 弾を登録する
-		bullets_.push_back(newBullet);
+			// 弾を生成し、初期化
+			PlayerBullet* newBullet = new PlayerBullet();
+			newBullet->Initialize(model_, GetWorldPosition(), velocity);
+
+			// 弾を登録する
+			bullets_.push_back(newBullet);
+		}
 	}
 }
 
@@ -617,8 +624,8 @@ Vector3 Player::GetWorld3DReticlePosition() {
 
 // 衝突を検出したら呼び出されるコールバック関数
 void Player::OnCollision() { 
-	isDead_ = true; 
-	isFinished_ = true;
+	//isDead_ = true; 
+	finished_ = true;
 };
 
 // 親子関係を結ぶ

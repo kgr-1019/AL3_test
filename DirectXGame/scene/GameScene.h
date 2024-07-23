@@ -82,7 +82,7 @@ private: // メンバ変数
 	// 自キャラ
 	Player* player_ = nullptr;
 	float playerRad_ = 1.0f;
-	Vector3 playerPosition = {0, 0, 20.0f};
+	Vector3 playerPosition = {0, 0, 30.0f};
 
 	// 自弾半径
 	float playerBulletRad_ = 1.0f;
@@ -95,7 +95,7 @@ private: // メンバ変数
 	std::list<Enemy*> enemies_;// 敵リスト
 	std::stringstream enemyPopCommands;// 敵発生コマンド
 	Vector3 position_ = {5, 2, 80};// 初期位置
-	Vector3 velocity_ = {0, 0, -0.1f};// 移動速度
+	Vector3 velocity_ = {0, 0, -0.5f};// 移動速度
 	Vector3 approachVelocity_ = {0, 0, -0.1f};// 接近フェーズ速度
 	Vector3 leaveVelocity_ = {-0.1f, 0.1f, 0};// 離脱フェーズ速度
 	std::list<EnemyBullet*> enemyBullets_;// リスト

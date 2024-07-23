@@ -1,5 +1,5 @@
 #include "RailCamera.h"
-#include"imgui.h"
+//#include"imgui.h"
 void RailCamera::Initialize(const Vector3& railCameraPosition, const Vector3& railCameraRotate) { 
 	// ワールドトランスフォームの初期設定
 	worldTransform_.translation_ = railCameraPosition;
@@ -30,8 +30,8 @@ void RailCamera::Update()
 	viewProjection_.matView = Inverse(worldTransform_.matWorld_);
 
 	// カメラの座標を画面表示する処理
-	ImGui::Begin("Camera");
+	/*ImGui::Begin("Camera");
 	ImGui::DragFloat3("translate", &worldTransform_.translation_.x,0.01f);
 	ImGui::DragFloat3("rotation", &worldTransform_.rotation_.x,0.01f);
-	ImGui::End();
+	ImGui::End();*/
 }

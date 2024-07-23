@@ -53,7 +53,7 @@ public:// メンバ関数
 	Vector3 GetWorldPosition();
 	Vector3 GetWorld3DReticlePosition();
 
-	bool IsDead() const { return isDead_; }
+	bool IsFinished() const { return finished_; }
 
 	// 衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
@@ -99,6 +99,9 @@ private:// メンバ変数
 	std::list<PlayerBullet*> bullets_; // 配列みたいなもの(コンテナ)になったので、複数形のsを追加しておく
 
 	// デスフラグ
-	bool isDead_ = false;
-	bool isFinished_ = false;
+	//bool isDead_ = false;
+	bool finished_ = false;
+
+	// 残弾数
+	int bulletCount = 3;
 };

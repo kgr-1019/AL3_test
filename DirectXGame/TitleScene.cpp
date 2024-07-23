@@ -2,7 +2,6 @@
 #include <Input.h>
 
 
-
 void TitleScene::Initialize() {}
 
 void TitleScene::Update() {
