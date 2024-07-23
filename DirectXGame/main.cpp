@@ -102,14 +102,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		imguiManager->End();
 		// 描画開始
 		dxCommon->PreDraw();
+		// 現在シーンの描画
+		DrawScene();
 		// 軸表示の描画
 		axisIndicator->Draw();
 		// プリミティブ描画のリセット
 		primitiveDrawer->Reset();
 		// ImGui描画
 		imguiManager->Draw();
-		// 現在シーンの描画
-		DrawScene();
 		// 描画終了
 		dxCommon->PostDraw();
 		
