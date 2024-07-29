@@ -27,6 +27,8 @@ Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);// ベクトル変
 Vector3 Normalize(const Vector3& v2);
 Vector3 Transform(const Vector3& point, const Matrix4x4& transformMatrix);
 
+class Enemy;
+
 class Player {
 
 public:// メンバ関数
@@ -56,7 +58,7 @@ public:// メンバ関数
 	bool IsFinished() const { return finished_; }
 
 	// 衝突を検出したら呼び出されるコールバック関数
-	void OnCollision();
+	void OnCollision(Enemy* enemy);
 
 	// 弾リストを取得
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
@@ -103,5 +105,5 @@ private:// メンバ変数
 	bool finished_ = false;
 
 	// 残弾数
-	int bulletCount = 3;
+	int bulletCount = 5;
 };

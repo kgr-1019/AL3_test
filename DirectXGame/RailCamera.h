@@ -15,6 +15,8 @@ public:
 
 	const WorldTransform& GetWorldTransform() { return worldTransform_; };
 
+	bool isGoal() { return isGoal_; }
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -28,8 +30,9 @@ private:
 	// 回転
 	Vector3 rotate_ = {0, 0, 0};
 
-	
-
 	// ImGuiで値を入力する変数
 	float inputFloat3[3] = {0, 0, 0};
+
+	// ゴールしたかどうか
+	bool isGoal_ = false;
 };

@@ -130,6 +130,12 @@ void GameScene::Update()
 	} else {
 		// レールカメラの更新
 		railCamera_->Update();
+		// ゴールしたら
+		if (railCamera_->isGoal())
+		{
+			// シーン切り替え
+			finished_=true;
+		}
 		viewProjection_.matView = railCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 		viewProjection_.TransferMatrix();
@@ -201,7 +207,7 @@ void GameScene::CheckAllCollisions()
 			float distance = (posC.x - posA.x) * (posC.x - posA.x) + (posC.y - posA.y) * (posC.y - posA.y) + (posC.z - posA.z) * (posC.z - posA.z);
 			if (distance <= (playerRad_ + enemyRad_) * (playerRad_ + enemyRad_)) {
 				enemy->OnCollision();
-				player_->OnCollision();
+				player_->OnCollision(enemy);
 			}
 		}
 

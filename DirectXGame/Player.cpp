@@ -1,6 +1,7 @@
 #include "Player.h"
 #include"cassert"
 #include"ImGuiManager.h"
+#include"Enemy.h"
 
 
 // 関数の定義
@@ -374,12 +375,13 @@ void Player::Update(const ViewProjection& viewProjection)
 	worldTransform3DReticle_.translation_ = Add(posNear, Multiply(kDistanceTestObject, mouseDirection));
 
 	// デバッグ文字表示
-	/*ImGui::Begin("Player");
+	ImGui::Begin("Player");
 	ImGui::Text("2DReticle:(%f,%f)", positionReticle.x, positionReticle.y);
 	ImGui::Text("Near:(%+.2f,%+.2f,%+.2)f", posNear.x, posNear.y, posNear.z);
 	ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
 	ImGui::Text("3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x, worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
-	ImGui::End();*/
+	ImGui::Text("playerBullet:%d", bulletCount);
+	ImGui::End();
 
 
 
@@ -623,9 +625,16 @@ Vector3 Player::GetWorld3DReticlePosition() {
 
 
 // 衝突を検出したら呼び出されるコールバック関数
-void Player::OnCollision() { 
+void Player::OnCollision(Enemy* enemy) 
+{ 
 	//isDead_ = true; 
+
 	finished_ = true;
+
+	if (enemy->IsStop())
+	{
+		bulletCount++;
+	}
 };
 
 // 親子関係を結ぶ
