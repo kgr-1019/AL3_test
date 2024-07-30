@@ -75,6 +75,7 @@ private: // メンバ変数
 	Audio* audio_ = nullptr;
 
 	Model* model_ = nullptr;
+	Model* modelPlayer_ = nullptr;
 	Model* modelSkydome_ = nullptr;
 
 	DebugCamera* debugCamera_ = nullptr;

@@ -14,6 +14,7 @@ GameScene::~GameScene() {
 			delete enemy;
 		}
 	}
+	delete modelPlayer_;
 	delete debugCamera_;// デバッグカメラ
 	delete modelSkydome_;// Skydome
 	// 弾のポインタが１つの時は１回deleteすればよかったが、
@@ -33,12 +34,13 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	// ファイル名を指定してテクスチャを読み込む
-	textureHandle_ = TextureManager::Load("nyan.png");
+	//textureHandle_ = TextureManager::Load("nyan.png");
 	textureReticle = TextureManager::Load("Reticle.png");
 
 
 	// 3Dモデルの生成
 	model_ = Model::Create();
+	modelPlayer_ = Model::CreateFromOBJ("Player", true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
 
@@ -47,11 +49,8 @@ void GameScene::Initialize() {
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
-
-	//if (player_ != nullptr) {
-		// 自キャラの生成
-		player_ = new Player();
-	//}
+	// プレイヤーの生成
+	player_ = new Player();
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 	// Skydome の生成
@@ -60,10 +59,8 @@ void GameScene::Initialize() {
 	railCamera_ = new RailCamera();
 
 
-	//if (player_ != nullptr) {
-		// 自キャラの初期化
-		player_->Initialize(model_, textureHandle_, playerPosition);
-	//}
+	// 自キャラの初期化
+	player_->Initialize(modelPlayer_, textureHandle_, playerPosition);
 	// Skydome の初期化
 	skydome_->Initialize(modelSkydome_,textureHandle_);
 	// railCamera の初期化

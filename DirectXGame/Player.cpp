@@ -633,7 +633,7 @@ void Player::OnCollision(Enemy* enemy)
 
 	if (enemy->IsStop())
 	{
-		bulletCount++;
+		bulletCount+=2;
 	}
 };
 
@@ -651,7 +651,8 @@ void Player::DrawUI() { sprite2DReticle_->Draw(); }
 void Player::Draw(ViewProjection& viewProjection) {
 
 	//3Dモデルを描画
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	//model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	model_->Draw(worldTransform_, viewProjection);
 
 	// 3Dレティクルを描画
 	//model_->Draw(worldTransform3DReticle_, viewProjection, textureReticle_);
