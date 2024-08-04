@@ -74,8 +74,10 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
+	// 3Dモデル
 	Model* model_ = nullptr;
 	Model* modelPlayer_ = nullptr;
+	Model* modelEnemy_ = nullptr;
 	Model* modelSkydome_ = nullptr;
 
 	DebugCamera* debugCamera_ = nullptr;
@@ -93,6 +95,7 @@ private: // メンバ変数
 
 	// 敵
 	float enemyRad_ = 1.0f;
+	Enemy* enemy_ = nullptr;
 	std::list<Enemy*> enemies_;// 敵リスト
 	std::stringstream enemyPopCommands;// 敵発生コマンド
 	Vector3 position_ = {5, 2, 80};// 初期位置

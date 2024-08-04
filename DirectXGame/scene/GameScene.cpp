@@ -15,6 +15,7 @@ GameScene::~GameScene() {
 		}
 	}
 	delete modelPlayer_;
+	//delete modelEnemy_;
 	delete debugCamera_;// デバッグカメラ
 	delete modelSkydome_;// Skydome
 	// 弾のポインタが１つの時は１回deleteすればよかったが、
@@ -41,6 +42,7 @@ void GameScene::Initialize() {
 	// 3Dモデルの生成
 	model_ = Model::Create();
 	modelPlayer_ = Model::CreateFromOBJ("Player", true);
+	//modelEnemy_ = Model::CreateFromOBJ("Enemy", true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
 

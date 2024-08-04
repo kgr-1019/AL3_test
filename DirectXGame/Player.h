@@ -78,6 +78,7 @@ private:// メンバ変数
 
 	// 2Dレティクル用スプライト
 	Sprite* sprite2DReticle_ = nullptr;
+	Sprite* spriteBulletUI_ = nullptr;
 	// レティクル初期位置
 	Vector3 positionReticle = {640.0f, 360.0f, 0.0f};
 
@@ -87,6 +88,7 @@ private:// メンバ変数
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 	uint32_t textureReticle_ = 0;
+	uint32_t textureBulletUI_ = 0;
 
 	// キーボード入力
 	Input* input_ = nullptr;
@@ -106,4 +108,6 @@ private:// メンバ変数
 
 	// 残弾数
 	int bulletCount = 5;
+
+	int bulletTimer = 0;
 };

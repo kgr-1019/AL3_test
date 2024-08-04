@@ -1,6 +1,6 @@
 # Blender 4.1.1
 # www.blender.org
-mtllib skydome.mtl.mtl
+mtllib skydome.mtl
 o 球
 v 0.000000 83.146957 55.557026
 v 0.000000 55.557026 83.146957

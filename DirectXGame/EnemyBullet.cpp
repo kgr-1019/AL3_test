@@ -12,7 +12,7 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	model_ = model;
 
 	// テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("hart.png");
+	textureHandle_ = TextureManager::Load("EnemyBullet.png");
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
