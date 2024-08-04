@@ -107,7 +107,7 @@ private:// メンバ変数
 	bool finished_ = false;
 
 	// 残弾数
-	int bulletCount = 5;
+	int bulletCount = 10;
 
 	int bulletTimer = 0;
 };

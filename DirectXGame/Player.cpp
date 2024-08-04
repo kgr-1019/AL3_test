@@ -381,14 +381,14 @@ void Player::Update(const ViewProjection& viewProjection)
 	const float kDistanceTestObject = 70.0f;
 	worldTransform3DReticle_.translation_ = Add(posNear, Multiply(kDistanceTestObject, mouseDirection));
 
-	// デバッグ文字表示
-	ImGui::Begin("Player");
-	ImGui::Text("2DReticle:(%f,%f)", positionReticle.x, positionReticle.y);
-	ImGui::Text("Near:(%+.2f,%+.2f,%+.2)f", posNear.x, posNear.y, posNear.z);
-	ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
-	ImGui::Text("3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x, worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
-	ImGui::Text("playerBullet:%d", bulletCount);
-	ImGui::End();
+	//// デバッグ文字表示
+	//ImGui::Begin("Player");
+	//ImGui::Text("2DReticle:(%f,%f)", positionReticle.x, positionReticle.y);
+	//ImGui::Text("Near:(%+.2f,%+.2f,%+.2)f", posNear.x, posNear.y, posNear.z);
+	//ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
+	//ImGui::Text("3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x, worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
+	//ImGui::Text("playerBullet:%d", bulletCount);
+	//ImGui::End();
 
 
 
@@ -480,10 +480,10 @@ void Player::Update(const ViewProjection& viewProjection)
 
 
 
-	 // キャラクターの座標を画面表示する処理
-	ImGui::Begin("PlayerPos");
-	ImGui::Text("Player %.02f,%.02f,%.02f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
-	ImGui::End();
+	// // キャラクターの座標を画面表示する処理
+	//ImGui::Begin("PlayerPos");
+	//ImGui::Text("Player %.02f,%.02f,%.02f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+	//ImGui::End();
 
 	// キャラクター旋回処理
 	Rotate();

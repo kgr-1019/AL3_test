@@ -428,6 +428,7 @@ void GameScene::Draw() {
 
 	// レティクル
 	player_->DrawUI();
+	railCamera_->DrawUI();
 
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
